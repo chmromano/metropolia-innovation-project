@@ -1,0 +1,38 @@
+---
+env:
+  browser: true
+  es2021: true
+  node: true
+extends:
+  - eslint:recommended
+parserOptions:
+  ecmaVersion: latest
+  ecmaFeatures:
+    jsx: true
+  sourceType: module
+rules:
+  no-unused-vars: error
+  arrow-spacing:
+    - error
+    - after: true
+      before: true
+  curly: error
+  eqeqeq: error
+  indent:
+    - error
+    - 2
+  linebreak-style:
+    - error
+    - unix
+  no-console: 0
+  no-trailing-spaces: error
+  object-curly-spacing:
+    - error
+    - always
+  prefer-template: 2
+  quotes:
+    - error
+    - double
+  semi:
+    - error
+    - always

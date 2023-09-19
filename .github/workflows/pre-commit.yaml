@@ -1,0 +1,19 @@
+name: Run pre-commit checks
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  pre-commit:
+    runs-on: self-hosted
+
+    steps:
+      # Checkout the repository
+      - uses: actions/checkout@v3
+
+      # Setup Python
+      - uses: actions/setup-python@v3
+
+      # Run pre-commit checks on all files in the repository
+      - uses: pre-commit/action@v3.0.0

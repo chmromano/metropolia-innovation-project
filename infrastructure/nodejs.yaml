@@ -1,0 +1,14 @@
+---
+- name: "Playbook for a nodeJS container"
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: "Pull nodeJS image"
+      ansible.builtin.command: >
+        podman pull docker.io/library/node:18
+      become: true
+
+    - name: "Start nodeJS container"
+      ansible.builtin.command: >
+        podman run -d --name nodejs_container docker.io/library/node:18 tail -f /dev/null
+      become: true

@@ -13,7 +13,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
 
       - name: Run pre-commit checks on all files in the repository
         uses: pre-commit/action@v3.0.0

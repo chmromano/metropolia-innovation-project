@@ -32,13 +32,9 @@ bool WiFiController::connectToNetwork()
     }
 
     if (this->m_connectionStatus == WL_CONNECTED) {
-        Serial.print("Succesfully connected to network: ");
-        Serial.println(this->m_ssid);
         return true;
     }
     else {
-        Serial.print("Unable to connect to network: ");
-        Serial.println(this->m_ssid);
         return false;
     }
 }

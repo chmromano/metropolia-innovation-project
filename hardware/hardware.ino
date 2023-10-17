@@ -17,10 +17,12 @@ void loop() {
   Serial.println("Starting program.");
   delay(2000);
 
+  /*
   if (wifiController.connectToNetwork()) {
     Serial.println("Connected to WiFi network.");
   }
-  
+  */
+
   /*
   if (tempSensor.readTemperature()) {
     int temperature = tempSensor.getTemperature();
@@ -38,7 +40,7 @@ void loop() {
   }
   delay(2000);
   */
-  
+
   Serial.println("Resetting in 3 seconds.");
   Serial.println("-------------------------");
   delay(3000);

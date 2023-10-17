@@ -38,48 +38,53 @@
 
 uint8_t toAnalogPin(NinaPin pin)
 {
-  if      (pin == A4) return 6; /* ADC1 - CH6 */
-  else if (pin == A5) return 3; /* ADC1 - CH3 */
-  else if (pin == A6) return 0; /* ADC1 - CH0 */
-  else if (pin == A7) return 7; /* ADC1 - CH7 */
-  else                return 0xFF;
+    if (pin == A4)
+        return 6; /* ADC1 - CH6 */
+    else if (pin == A5)
+        return 3; /* ADC1 - CH3 */
+    else if (pin == A6)
+        return 0; /* ADC1 - CH0 */
+    else if (pin == A7)
+        return 7; /* ADC1 - CH7 */
+    else
+        return 0xFF;
 }
 
 void pinMode(NinaPin pin, PinMode mode)
 {
-  WiFiDrv::pinMode(VAL(pin), static_cast<uint8_t>(mode));
+    WiFiDrv::pinMode(VAL(pin), static_cast<uint8_t>(mode));
 }
 
 PinStatus digitalRead(NinaPin pin)
 {
-  return WiFiDrv::digitalRead(VAL(pin));
+    return WiFiDrv::digitalRead(VAL(pin));
 }
 
 void digitalWrite(NinaPin pin, PinStatus value)
 {
-  if (value == LOW)
-    WiFiDrv::digitalWrite(VAL(pin), 1);
-  else
-    WiFiDrv::digitalWrite(VAL(pin), 0);
+    if (value == LOW)
+        WiFiDrv::digitalWrite(VAL(pin), 1);
+    else
+        WiFiDrv::digitalWrite(VAL(pin), 0);
 }
 
 int analogRead(NinaPin pin)
 {
-  uint8_t const adc_channel = toAnalogPin(pin);
+    uint8_t const adc_channel = toAnalogPin(pin);
 
-  if (adc_channel == 0xFF)
-    return 0;
-  else
+    if (adc_channel == 0xFF)
+        return 0;
+    else
 #ifdef NINA_PINS_AS_CLASS
-    return WiFiDrv::analogRead(adc_channel) >> (12 - pin.analogReadResolution());
+        return WiFiDrv::analogRead(adc_channel) >> (12 - pin.analogReadResolution());
 #else
-    return WiFiDrv::analogRead(adc_channel);
+        return WiFiDrv::analogRead(adc_channel);
 #endif
 }
 
 void analogWrite(NinaPin pin, int value)
 {
-  WiFiDrv::analogWrite(VAL(pin), static_cast<uint8_t>(value));
+    WiFiDrv::analogWrite(VAL(pin), static_cast<uint8_t>(value));
 }
 
 #endif /* ARDUINO_NANO_RP2040_CONNECT */

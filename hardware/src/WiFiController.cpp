@@ -1,10 +1,9 @@
-
 #include "WiFiController.h"
 
 WiFiController::WiFiController()
 {
-    this->m_ssid = SECRET_SSID;         // Needs to be defined in wifi_secrets.h
-    this->m_pass = SECRET_PASS;         // Needs to be defined in wifi_secrets.h
+    this->m_ssid = SECRET_SSID; // Needs to be defined in wifi_secrets.h
+    this->m_pass = SECRET_PASS; // Needs to be defined in wifi_secrets.h
 }
 
 void WiFiController::printSSID()
@@ -16,8 +15,10 @@ bool WiFiController::connectToNetwork()
 {
     int attemptCounter = 0;
 
-    while (this->m_connectionStatus != WL_CONNECTED) {
-        if (attemptCounter < 5) {
+    while (this->m_connectionStatus != WL_CONNECTED)
+    {
+        if (attemptCounter < 5)
+        {
             attemptCounter++;
 
             Serial.print("Trying to connect to network: ");
@@ -31,10 +32,12 @@ bool WiFiController::connectToNetwork()
         }
     }
 
-    if (this->m_connectionStatus == WL_CONNECTED) {
+    if (this->m_connectionStatus == WL_CONNECTED)
+    {
         return true;
     }
-    else {
+    else
+    {
         return false;
     }
 }

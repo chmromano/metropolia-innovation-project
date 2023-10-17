@@ -23,28 +23,30 @@
 #include <stddef.h>
 #include <stdint.h>
 
-extern "C" {
-  #include "utility/wl_definitions.h"
+extern "C"
+{
+#include "utility/wl_definitions.h"
 }
 
-class WiFiSocketBufferClass {
+class WiFiSocketBufferClass
+{
+  public:
+    WiFiSocketBufferClass();
+    ~WiFiSocketBufferClass();
 
-public:
-  WiFiSocketBufferClass();
-  ~WiFiSocketBufferClass();
+    void close(int socket);
 
-  void close(int socket);
+    int available(int socket);
+    int peek(int socket);
+    int read(int socket, uint8_t *data, size_t length);
 
-  int available(int socket);
-  int peek(int socket);
-  int read(int socket, uint8_t* data, size_t length);
-
-private:
-  struct {
-    uint8_t* data;
-    uint8_t* head;
-    int length;
-  } _buffers[WIFI_MAX_SOCK_NUM];
+  private:
+    struct
+    {
+        uint8_t *data;
+        uint8_t *head;
+        int length;
+    } _buffers[WIFI_MAX_SOCK_NUM];
 };
 
 extern WiFiSocketBufferClass WiFiSocketBuffer;

@@ -30,76 +30,83 @@ unsigned long baud = 115200;
 int rts = -1;
 int dtr = -1;
 
-void setup() {
-  Serial.begin(baud);
+void setup()
+{
+    Serial.begin(baud);
 
 #ifdef ARDUINO_SAMD_MKRVIDOR4000
-  FPGA.begin();
+    FPGA.begin();
 #endif
 
-  SerialNina.begin(baud);
+    SerialNina.begin(baud);
 
 #ifdef ARDUINO_SAMD_MKRVIDOR4000
-  FPGA.pinMode(FPGA_NINA_GPIO0, OUTPUT);
-  FPGA.pinMode(FPGA_SPIWIFI_RESET, OUTPUT);
+    FPGA.pinMode(FPGA_NINA_GPIO0, OUTPUT);
+    FPGA.pinMode(FPGA_SPIWIFI_RESET, OUTPUT);
 #else
-  pinMode(NINA_GPIO0, OUTPUT);
-  pinMode(NINA_RESETN, OUTPUT);
+    pinMode(NINA_GPIO0, OUTPUT);
+    pinMode(NINA_RESETN, OUTPUT);
 #endif
 
 #ifdef ARDUINO_AVR_UNO_WIFI_REV2
-  // manually put the NINA in upload mode
-  digitalWrite(NINA_GPIO0, LOW);
+    // manually put the NINA in upload mode
+    digitalWrite(NINA_GPIO0, LOW);
 
-  digitalWrite(NINA_RESETN, LOW);
-  delay(100);
-  digitalWrite(NINA_RESETN, HIGH);
-  delay(100);
-  digitalWrite(NINA_RESETN, LOW);
+    digitalWrite(NINA_RESETN, LOW);
+    delay(100);
+    digitalWrite(NINA_RESETN, HIGH);
+    delay(100);
+    digitalWrite(NINA_RESETN, LOW);
 #endif
 }
 
-void loop() {
+void loop()
+{
 #ifndef ARDUINO_AVR_UNO_WIFI_REV2
-  if (rts != Serial.rts()) {
+    if (rts != Serial.rts())
+    {
 #ifdef ARDUINO_SAMD_MKRVIDOR4000
-    FPGA.digitalWrite(FPGA_SPIWIFI_RESET, (Serial.rts() == 1) ? LOW : HIGH);
+        FPGA.digitalWrite(FPGA_SPIWIFI_RESET, (Serial.rts() == 1) ? LOW : HIGH);
 #elif defined(ARDUINO_SAMD_NANO_33_IOT)
-    digitalWrite(NINA_RESETN, Serial.rts() ? LOW : HIGH);
+        digitalWrite(NINA_RESETN, Serial.rts() ? LOW : HIGH);
 #else
-    digitalWrite(NINA_RESETN, Serial.rts());
+        digitalWrite(NINA_RESETN, Serial.rts());
 #endif
-    rts = Serial.rts();
-  }
+        rts = Serial.rts();
+    }
 
-  if (dtr != Serial.dtr()) {
+    if (dtr != Serial.dtr())
+    {
 #ifdef ARDUINO_SAMD_MKRVIDOR4000
-    FPGA.digitalWrite(FPGA_NINA_GPIO0, (Serial.dtr() == 1) ? HIGH : LOW);
+        FPGA.digitalWrite(FPGA_NINA_GPIO0, (Serial.dtr() == 1) ? HIGH : LOW);
 #else
-    digitalWrite(NINA_GPIO0, (Serial.dtr() == 0) ? HIGH : LOW);
+        digitalWrite(NINA_GPIO0, (Serial.dtr() == 0) ? HIGH : LOW);
 #endif
-    dtr = Serial.dtr();
-  }
+        dtr = Serial.dtr();
+    }
 #endif
 
-  if (Serial.available()) {
-    SerialNina.write(Serial.read());
-  }
+    if (Serial.available())
+    {
+        SerialNina.write(Serial.read());
+    }
 
-  if (SerialNina.available()) {
-    Serial.write(SerialNina.read());
-  }
+    if (SerialNina.available())
+    {
+        Serial.write(SerialNina.read());
+    }
 
 #ifndef ARDUINO_AVR_UNO_WIFI_REV2
-  // check if the USB virtual serial wants a new baud rate
-  if (Serial.baud() != baud) {
-    rts = -1;
-    dtr = -1;
+    // check if the USB virtual serial wants a new baud rate
+    if (Serial.baud() != baud)
+    {
+        rts = -1;
+        dtr = -1;
 
-    baud = Serial.baud();
+        baud = Serial.baud();
 #ifndef ARDUINO_SAMD_MKRVIDOR4000
-    SerialNina.begin(baud);
+        SerialNina.begin(baud);
 #endif
-  }
+    }
 #endif
 }

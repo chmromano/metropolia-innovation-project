@@ -5,6 +5,7 @@
 ### `WiFi.begin()`
 
 #### Description
+
 Initializes the WiFiNINA library's network settings and provides the current status.
 
 #### Syntax
@@ -48,6 +49,7 @@ void loop () {}
 ### `WiFi.end()`
 
 #### Description
+
 Turns off the WiFi module. If WiFi.begin() was used to connect to an access point, the connection will be disconnected.
 If WiFi.beginAP() was used before to create an access point, the WiFi.end() will stop listening it too.
 
@@ -189,7 +191,7 @@ void loop() {
       Serial.println("Device disconnected from AP");
     }
   }
- 
+
   WiFiClient client = server.available();   // listen for incoming clients
 
   if (client) {                             // if you get a client,
@@ -465,7 +467,7 @@ This example shows how to set the static IP address, 192.168.0.177, of the LAN n
 #include <WiFiNINA.h>
 
 // the IP address for the shield:
-IPAddress ip(192, 168, 0, 177);    
+IPAddress ip(192, 168, 0, 177);
 
 char ssid[] = "yourNetwork";    // your network SSID (name)
 char pass[] = "secretPassword"; // your network password (use for WPA, or use as key for WEP)
@@ -473,7 +475,7 @@ char pass[] = "secretPassword"; // your network password (use for WPA, or use as
 int status = WL_IDLE_STATUS;
 
 void setup()
-{  
+{
   // Initialize serial and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
@@ -486,7 +488,7 @@ void setup()
   while ( status != WL_CONNECTED) {
     Serial.print("Attempting to connect to SSID: ");
     Serial.println(ssid);
-    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:    
+    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
     status = WiFi.begin(ssid, pass);
 
     // wait 10 seconds for connection:
@@ -533,7 +535,7 @@ This example shows how to set the Google DNS (8.8.8.8). You can set it as an obj
 #include <WiFiNINA.h>
 
 // the IP address for the shield:
-IPAddress dns(8, 8, 8, 8);  //Google DNS  
+IPAddress dns(8, 8, 8, 8);  //Google DNS
 
 char ssid[] = "yourNetwork";    // your network SSID (name)
 char pass[] = "secretPassword"; // your network password (use for WPA, or use as key for WEP)
@@ -541,7 +543,7 @@ char pass[] = "secretPassword"; // your network password (use for WPA, or use as
 int status = WL_IDLE_STATUS;
 
 void setup()
-{  
+{
   // Initialize serial and wait for port to open:
   Serial.begin(9600);
   while (!Serial) {
@@ -552,7 +554,7 @@ void setup()
   while ( status != WL_CONNECTED) {
     Serial.print("Attempting to connect to SSID: ");
     Serial.println(ssid);
-    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:    
+    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
     status = WiFi.begin(ssid, pass);
 
     // wait 10 seconds for connection:
@@ -566,12 +568,13 @@ void setup()
 
 void loop () {
 }
- 
+
 ```
 
 ### `WiFi.setHostname()`
 
 #### Description
+
 Sets the hostname of the module, the hostname is sent in WiFi.begin(...) when an IP address is requested from a DHCP server.
 
 #### Syntax
@@ -611,6 +614,7 @@ WiFi.setHostname(hostname)
 ### `WiFi.setTimeout()`
 
 #### Description
+
 Sets the connection timeout value in milliseconds for WiFi.begin(...).
 
 #### Syntax
@@ -650,6 +654,7 @@ WiFi.setTimeout(timeout)
 ### `WiFi.SSID()`
 
 #### Description
+
 Gets the SSID of the current network
 
 #### Syntax
@@ -713,12 +718,13 @@ void scanNetworks() {
     Serial.println(WiFi.SSID(thisNet));
   }
 }
- 
+
 ```
 
 ### `WiFi.BSSID()`
 
 #### Description
+
 Gets the MAC address of the router you are connected to or the MAC address of a network that was scanned.
 
 #### Syntax
@@ -760,7 +766,7 @@ void setup()
   else {
   // print the MAC address of the router you're attached to:
   byte bssid[6];
-  WiFi.BSSID(bssid);    
+  WiFi.BSSID(bssid);
   Serial.print("BSSID: ");
   Serial.print(bssid[5],HEX);
   Serial.print(":");
@@ -782,6 +788,7 @@ void loop () {}
 ### `WiFi.RSSI()`
 
 #### Description
+
 Gets the signal strength of the connection to the router
 
 #### Syntax
@@ -833,6 +840,7 @@ void loop () {}
 ### `WiFi.channel()`
 
 #### Description
+
 Gets the WiFi channel of a network that was scanned.
 
 #### Syntax
@@ -893,6 +901,7 @@ WiFi.channel(wifiAccessPoint)
 ### `WiFi.encryptionType()`
 
 #### Description
+
 Gets the encryption type of the current network
 
 #### Syntax
@@ -950,6 +959,7 @@ void loop () {}
 ### `WiFi.scanNetworks()`
 
 #### Description
+
 Scans for available WiFi networks and returns the discovered number
 
 #### Syntax
@@ -1260,6 +1270,7 @@ void printMacAddress(byte mac[]) {
 ### `WiFi.status()`
 
 #### Description
+
 Return the connection status.
 
 #### Syntax
@@ -1326,12 +1337,13 @@ void loop() {
  Serial.println(WiFi.status());
 }
 
- 
+
 ```
 
 ### `WiFi.macAddress()`
 
 #### Description
+
 Gets the MAC Address of your WiFi NINA module
 
 #### Syntax
@@ -1395,6 +1407,7 @@ void loop () {}
 ### `WiFi.firmwareVersion()`
 
 #### Description
+
 Returns the firmware version running on the module as a string.
 
 #### Syntax
@@ -1502,6 +1515,7 @@ WiFi.reasonCode()
 ### `WiFi.hostByName()`
 
 #### Description
+
 Resolve the given hostname to an IP address
 
 #### Syntax
@@ -1562,9 +1576,11 @@ WiFi.localIP()
 ```
 
 #### Parameters
+
 - None
 
 #### Returns
+
 - the IP address of the board
 
 #### Example
@@ -1605,6 +1621,7 @@ void loop () {}
 ### `WiFi.subnetMask()`
 
 #### Description
+
 Gets the WiFi's subnet mask
 
 #### Syntax
@@ -1658,12 +1675,13 @@ void setup()
 
 void loop () {
 }
- 
+
 ```
 
 ### `WiFi.gatewayIP()`
 
 #### Description
+
 Gets the WiFi's gateway IP address.
 
 #### Syntax
@@ -1723,6 +1741,7 @@ void loop () {}
 ### `WiFi.getTime()`
 
 #### Description
+
 Get the time in seconds since January 1st, 1970. The time is retrieved from the WiFi module which periodically fetches the NTP time from an NTP server.
 
 #### Syntax
@@ -1815,6 +1834,7 @@ void loop() {
 ### `WiFiSSLClient`
 
 #### Description
+
 This class allows to create a client that always connects in SSL to the specified IP address and port, even if client.connect() is used instead of client.connectSSL(). This is useful If you have a library that accepts only plain Client, but you want to force it to use SSL, keeping the same method names of the non SSL client.
 
 #### Syntax
@@ -1952,6 +1972,7 @@ void printWiFiStatus() {
 ### `client.connected()`
 
 #### Description
+
 Whether or not the client is connected. Note that a client is considered connected if the connection has been closed but there is still unread data.
 
 #### Syntax
@@ -2028,6 +2049,7 @@ void loop() {
 ### `client.connect()`
 
 #### Description
+
 Connect to the IP address and port specified in the constructor. The return value indicates success or failure. connect() also supports DNS lookups when using a domain name (e.g., google.com).
 
 #### Syntax
@@ -2113,6 +2135,7 @@ client.connectSSL(URL, port)
 - port: the port that the client will connect to (int)
 
 #### Returns
+
 Returns true if the connection succeeds, false if not.
 
 #### Example
@@ -2212,6 +2235,7 @@ void loop() {
 ### `client.status()`
 
 #### Description
+
 Return Connection status.
 
 #### Syntax
@@ -2282,6 +2306,7 @@ void setup() {
 ### `client.write()`
 
 #### Description
+
 Write data to all the clients connected to a server.
 
 #### Syntax
@@ -2317,6 +2342,7 @@ client.print(data, BASE)
 ```
 
 #### Parameters
+
 - data: the data to print (char, byte, int, long, or string)
 - BASE (optional): the base in which to print numbers:, DEC for decimal (base 10), OCT for octal (base 8), HEX for hexadecimal (base 16).
 
@@ -2351,6 +2377,7 @@ client.print(data, BASE)
 ### `client.available()`
 
 #### Description
+
 Returns the number of bytes available for reading (that is, the amount of data that has been written to the client by the server it is connected to).
 
 available() inherits from the Stream utility class.
@@ -2551,10 +2578,11 @@ client.read(buffer, size);
 
 #### Parameters
 
-- buffer: buffer to hold incoming packets (char*)
+- buffer: buffer to hold incoming packets (char\*)
 - len: maximum size of the buffer (int)
 
 #### Returns
+
 - b: the next character in the buffer (char)
 - size: the size of the data
 - -1: if no data is available
@@ -2574,9 +2602,11 @@ client.flush()
 ```
 
 #### Parameters
+
 - None
 
 #### Returns
+
 - None
 
 ### `client.stop()`
@@ -2602,6 +2632,7 @@ client.stop()
 ### `client.remoteIP()`
 
 #### Description
+
 Gets the IP address of the remote connection.
 
 #### Syntax
@@ -2622,6 +2653,7 @@ client.remoteIP()
 ### `client.remotePort()`
 
 #### Description
+
 Gets the port number of the remote connection.
 
 #### Syntax
@@ -2636,6 +2668,7 @@ client.remotePort()
 - None
 
 #### Returns
+
 The port of the remote host that the client is connected to
 
 ## Server Class
@@ -2659,9 +2692,11 @@ WiFiServer server(port);
 ```
 
 #### Parameters
+
 - port: the port to listen on (int)
 
 #### Returns
+
 - None
 
 #### Example
@@ -2701,12 +2736,13 @@ void setup() {
 void loop() {
 
 }
- 
+
 ```
 
 ### `server.begin()`
 
 #### Description
+
 Tells the server to begin listening for incoming connections.
 
 #### Syntax
@@ -2761,12 +2797,13 @@ void setup() {
 void loop() {
 
 }
- 
+
 ```
 
 ### `server.status()`
 
 #### Description
+
 Return Connection status.
 
 #### Syntax
@@ -2797,6 +2834,7 @@ Serial.println(client.status());
 ### `server.write()`
 
 #### Description
+
 Write data to all the clients connected to a server.
 
 #### Syntax
@@ -2872,16 +2910,19 @@ server.print(data, BASE)
 ```
 
 #### Parameters
+
 - data: the data to print (char, byte, int, long, or string)
 - BASE (optional): the base in which to print numbers: BIN for binary (base 2), DEC for decimal (base 10), OCT for octal (base 8), HEX for hexadecimal (base 16).
 
 #### Returns
+
 - byte
 - print() will return the number of bytes written, though reading that number is optional
 
 ### `server.println()`
 
 #### Description
+
 Prints data, followed by a newline, to all the clients connected to a server. Prints numbers as a sequence of digits, each an ASCII character (e.g. the number 123 is sent as the three characters '1', '2', '3').
 
 #### Syntax
@@ -2899,13 +2940,14 @@ server.println(data, BASE)
 - BASE (optional): the base in which to print numbers: DEC for decimal (base 10), OCT for octal (base 8), HEX for hexadecimal (base 16).
 
 #### Returns
+
 - byte
 - println() will return the number of bytes written, though reading that number is optional
-
 
 ### `server.available()`
 
 #### Description
+
 Gets a client that is connected to the server and has data available for reading. The connection persists when the returned client object goes out of scope; you can close it by calling client.stop().
 
 available() inherits from the Stream utility class.
@@ -2970,7 +3012,7 @@ void loop() {
     client.stop();
   }
 }
- 
+
 ```
 
 ### `server.peek()`
@@ -2993,8 +3035,10 @@ server.peek()
 - None
 
 #### Returns
+
 - b: the next byte or character
 - -1: if none is available
+
 #### Example
 
 ```
@@ -3089,6 +3133,7 @@ void loop() {
 ### `WiFiUDP`
 
 #### Description
+
 Creates a named instance of the WiFi UDP class that can send and receive UDP messages.
 
 #### Syntax
@@ -3098,11 +3143,13 @@ WiFiUDP
 ```
 
 #### Parameters
+
 none
 
 ### `WiFiUDP.begin()`
 
 #### Description
+
 Initializes the WiFi UDP library and network settings. Starts WiFiUDP socket, listening at local port PORT.
 
 #### Syntax
@@ -3181,6 +3228,7 @@ void setup() {
 ### `WiFiUDP.beginPacket()`
 
 #### Description
+
 Starts a connection to write UDP data to the remote connection
 
 #### Syntax
@@ -3202,10 +3250,10 @@ WiFiUDP.beginPacket(hostIp, port);
 - 1: if successful
 - 0: if there was a problem with the supplied IP address or port
 
-
 ### `WiFiUDP.write()`
 
 #### Description
+
 Writes UDP data to the remote connection. Must be wrapped between beginPacket() and endPacket(). beginPacket() initializes the packet of data, it is not sent until endPacket() is called.
 
 #### Syntax
@@ -3251,6 +3299,7 @@ WiFiUDP.endPacket()
 ### `WiFiUDP.available()`
 
 #### Description
+
 Get the number of bytes (characters) available for reading from the buffer. This is data that's already arrived.
 
 This function can only be successfully called after WiFiUDP.parsePacket().
@@ -3286,15 +3335,18 @@ WiFiUDP..parsePacket()
 ```
 
 #### Parameters
+
 - None
 
 #### Returns
+
 - the size of the packet in bytes
 - 0: if no packets are available
 
 ### `WiFiUDP.peek()`
 
 #### Description
+
 Read a byte from the file without advancing to the next one. That is, successive calls to peek() will return the same value, as will the next call to read().
 
 This function inherited from the Stream class. See the Stream class main page for more information.
@@ -3311,12 +3363,14 @@ WiFiUDP.peek()
 - None
 
 #### Returns
+
 - b: the next byte or character
 - -1: if none is available
 
 ### `WiFiUDP.read()`
 
 #### Description
+
 Reads UDP data from the specified buffer. If no arguments are given, it will return the next character in the buffer.
 
 This function can only be successfully called after WiFiUDP.parsePacket().
@@ -3329,10 +3383,12 @@ WiFiUDP.read(buffer, len);
 ```
 
 #### Parameters
-- buffer: buffer to hold incoming packets (char*)
-len: maximum size of the buffer (int)
+
+- buffer: buffer to hold incoming packets (char\*)
+  len: maximum size of the buffer (int)
 
 #### Returns
+
 - b: the characters in the buffer (char)
 - size: the size of the buffer
 - -1: if no buffer is available
@@ -3340,6 +3396,7 @@ len: maximum size of the buffer (int)
 ### `WiFiUDP.flush()`
 
 #### Description
+
 Discard any bytes that have been written to the client but not yet read.
 
 `flush()` inherits from the Stream utility class.
@@ -3351,14 +3408,17 @@ WiFiUDP.flush()
 ```
 
 #### Parameters
+
 none
 
 #### Returns
+
 - None
 
 ### `WiFiUDP.stop()`
 
 #### Description
+
 Disconnect from the server. Release any resource being used during the UDP session.
 
 #### Syntax
@@ -3368,14 +3428,17 @@ WiFiUDP.stop()
 ```
 
 #### Parameters
+
 - None
 
 #### Returns
+
 - None
 
 ### `WiFiUDP.remoteIP()`
 
 #### Description
+
 Gets the IP address of the remote connection.
 
 This function must be called after `WiFiUDP.parsePacket()`.
@@ -3394,10 +3457,10 @@ WiFiUDP.remoteIP();
 
 - 4 bytes : the IP address of the host who sent the current incoming packet
 
-
 ### `WiFiUDP.remotePort()`
 
 #### Description
+
 Gets the port of the remote UDP connection.
 
 This function must be called after UDP.parsePacket().
@@ -3415,4 +3478,3 @@ UDP.remotePort()
 #### Returns
 
 - The port of the host who sent the current incoming packet
-

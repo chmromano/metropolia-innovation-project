@@ -23,7 +23,8 @@ bool TemperatureSensor::readTemperature()
 {
     int a = analogRead(this->m_analogPin);
 
-    if (a) {
+    if (a)
+    {
         float R = 1023.0 / a - 1.0;
         R = this->m_res * R;
         float temperature = 1.0 / (log(R / this->m_res) / this->m_bValue + 1 / 298.15) - 273.15;

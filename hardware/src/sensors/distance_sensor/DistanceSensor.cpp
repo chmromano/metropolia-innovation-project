@@ -17,7 +17,8 @@ bool DistanceSensor::readDistance()
 {
     long RangeInCentimeters = this->m_ultraSonic.MeasureInCentimeters();
 
-    if (RangeInCentimeters) {
+    if (RangeInCentimeters)
+    {
         this->m_rangeInCm = RangeInCentimeters;
         return true;
     }

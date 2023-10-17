@@ -22,25 +22,33 @@
 #define Server_Drv_h
 
 #include <inttypes.h>
+
 #include "utility/wifi_spi.h"
 
-typedef enum eProtMode {TCP_MODE, UDP_MODE, TLS_MODE, UDP_MULTICAST_MODE, TLS_BEARSSL_MODE}tProtMode;
+typedef enum eProtMode
+{
+    TCP_MODE,
+    UDP_MODE,
+    TLS_MODE,
+    UDP_MULTICAST_MODE,
+    TLS_BEARSSL_MODE
+} tProtMode;
 
 class ServerDrv
 {
-public:
-
+  public:
     // Start server TCP on port specified
-    static void startServer(uint16_t port, uint8_t sock, uint8_t protMode=TCP_MODE);
+    static void startServer(uint16_t port, uint8_t sock, uint8_t protMode = TCP_MODE);
 
-    static void startServer(uint32_t ipAddress, uint16_t port, uint8_t sock, uint8_t protMode=TCP_MODE);
+    static void startServer(uint32_t ipAddress, uint16_t port, uint8_t sock, uint8_t protMode = TCP_MODE);
 
-    static void startClient(uint32_t ipAddress, uint16_t port, uint8_t sock, uint8_t protMode=TCP_MODE);
+    static void startClient(uint32_t ipAddress, uint16_t port, uint8_t sock, uint8_t protMode = TCP_MODE);
 
-    static void startClient(const char* host, uint8_t host_len, uint32_t ipAddress, uint16_t port, uint8_t sock, uint8_t protMode=TCP_MODE);
+    static void startClient(const char *host, uint8_t host_len, uint32_t ipAddress, uint16_t port, uint8_t sock,
+                            uint8_t protMode = TCP_MODE);
 
     static void stopClient(uint8_t sock);
-                                                                                  
+
     static uint8_t getServerState(uint8_t sock);
 
     static uint8_t getClientState(uint8_t sock);

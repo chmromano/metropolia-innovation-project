@@ -1,7 +1,10 @@
 
 #include "src/sensors/temperature_sensor/TemperatureSensor.h"
 #include "src/sensors/distance_sensor/DistanceSensor.h"
+#include "src/WiFiController.h"
 
+
+WiFiController wifiController;
 TemperatureSensor tempSensor(6);
 DistanceSensor distSensor(0);
 
@@ -14,6 +17,10 @@ void loop() {
   Serial.println("Starting program.");
   delay(2000);
 
+  if (wifiController.connectToNetwork()) {
+    Serial.println("Connected to WiFi network.");
+  }
+  
   /*
   if (tempSensor.readTemperature()) {
     int temperature = tempSensor.getTemperature();

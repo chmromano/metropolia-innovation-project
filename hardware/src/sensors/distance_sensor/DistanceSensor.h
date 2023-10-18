@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#include "Ultrasonic.h"
+#include "../ultrasonic_ranger/Ultrasonic.h"
 
 class DistanceSensor
 {

@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 
-#include "WiFiNINA.h"
 #include "wifi_secrets.h"
+#include <WiFiNINA.h>
 
 class WiFiController
 {

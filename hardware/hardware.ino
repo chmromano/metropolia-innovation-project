@@ -22,9 +22,7 @@ void loop()
     if (wifiController.connectToNetwork()) {
       Serial.println("Connected to WiFi network.");
     }
-    */
 
-    /*
     if (tempSensor.readTemperature()) {
       int temperature = tempSensor.getTemperature();
       Serial.print("Temperature: ")

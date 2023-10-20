@@ -20,11 +20,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Install pip packages
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install --user pipx
+          echo "/root/.local/bin" >> $GITHUB_PATH
+          python3 -m pipx ensurepath
+
       - name: Install Arduino CLI
         uses: arduino/setup-arduino-cli@v1
 
       - name: Compile Arduino sketch
         uses: arduino/compile-sketches@v1
         with:
+          fqbn: "arduino:samd:mkrwifi1010"
+          libraries: |
+            - name: WiFiNINA
           sketch-paths: |
             - ./

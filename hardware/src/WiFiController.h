@@ -4,6 +4,7 @@
 #include <Arduino.h>
 
 #include "wifi_secrets.h"
+#include <ArduinoHttpClient.h>
 #include <WiFiNINA.h>
 
 class WiFiController

@@ -34,6 +34,8 @@ bool WiFiController::connectToNetwork()
 
     if (this->m_connectionStatus == WL_CONNECTED)
     {
+        Serial.print("IP address: ");
+        Serial.println(WiFi.localIP());
         return true;
     }
     else

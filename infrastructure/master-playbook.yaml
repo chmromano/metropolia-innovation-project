@@ -1,0 +1,9 @@
+---
+- name: "Run all the playbooks"
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: "Run ubuntu playbook"
+      import_playbook: ubuntu-playbook.yaml
+    - name: "Run nodejs container"
+      import_playbook: nodejs.yaml

@@ -25,7 +25,7 @@ bool TemperatureSensor::readTemperature()
 
     if (a)
     {
-        float R = 1023.0 / a - 1.0;
+        float R = 4095.0 / a - 1.0;
         R = this->m_res * R;
         float temperature = 1.0 / (log(R / this->m_res) / this->m_bValue + 1 / 298.15) - 273.15;
         this->m_currentTemperature = temperature;

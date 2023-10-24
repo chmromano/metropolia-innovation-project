@@ -87,15 +87,12 @@ void loop()
     pumpController.activatePump(4, 2000);
     */
 
-    /*
-    delay(2000);
-    if (tempSensor.readTemperature()) {
-      int temperature = tempSensor.getTemperature();
-      Serial.print("Temperature: ");
-      Serial.println(temperature);
+    if (tempSensor.readTemperature())
+    {
+        int temperature = tempSensor.getTemperature();
+        Serial.print("Temperature: ");
+        Serial.println(temperature);
     }
-    delay(2000);
-    */
 
     /*
     if (distSensor.readDistance()) {
@@ -105,12 +102,14 @@ void loop()
     }
     */
 
+    /*
     if (moistSensor.readMoisture())
     {
         int moisture = moistSensor.getMoisture();
         Serial.print("Moisture %: ");
         Serial.println(moisture);
     }
+    */
 
     Serial.println("Resetting in 3 seconds.");
     Serial.println("-------------------------");

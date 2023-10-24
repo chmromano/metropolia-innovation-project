@@ -3,10 +3,13 @@ name: Pre-commit checks
 on:
   pull_request:
   push:
+    branches:
+      - main
 
 jobs:
   pre-commit:
-    runs-on: self-hosted
+    runs-on:
+      - ubuntu-latest
 
     steps:
       - name: Checkout the repository

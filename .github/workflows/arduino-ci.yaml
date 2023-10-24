@@ -2,15 +2,14 @@ name: Arduino CI
 
 on:
   pull_request:
-    paths:
-      - "hardware/**"
   push:
-    paths:
-      - "hardware/**"
+    branches:
+      - main
 
 jobs:
   arduino-ci:
-    runs-on: self-hosted
+    runs-on:
+      - ubuntu-latest
 
     defaults:
       run:
@@ -23,14 +22,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.12
-
-      - name: Install pip packages
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install --user pipx
-          echo "/root/.local/bin" >> $GITHUB_PATH
-          python3 -m pipx ensurepath
+          python-version: "3.12"
 
       - name: Install Arduino CLI
         uses: arduino/setup-arduino-cli@v1

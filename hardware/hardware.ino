@@ -3,6 +3,7 @@
 #include "src/WiFiController.h"
 #include "src/actuators/relay/Relay.h"
 #include "src/sensors/distance_sensor/DistanceSensor.h"
+#include "src/sensors/moisture_sensor/MoistureSensor.h"
 #include "src/sensors/temperature_sensor/TemperatureSensor.h"
 // #include <ArduinoHttpClient.h>
 
@@ -10,6 +11,7 @@ WiFiController wifiController;
 WebSocketController webSocketController;
 DistanceSensor distSensor(0);
 TemperatureSensor tempSensor(6);
+MoistureSensor moistSensor(5);
 Relay pumpController(1, 2, 3, 4);
 
 char serverAddress[] = "echo.websocket.events"; // address for server to echo back WebSocket messages
@@ -34,6 +36,9 @@ void setup()
     {
         Serial.println("Connected to WiFi network.");
     }
+
+    // 12 bit ADC
+    analogReadResolution(12);
 }
 
 void loop()
@@ -44,6 +49,7 @@ void loop()
 
     // webSocketController.sendMessage("hello");
 
+    /*
     Serial.println("Starting WebSocket client");
     client.begin();
 
@@ -72,6 +78,7 @@ void loop()
         // Wait 5000ms and send next message.
         delay(5000);
     }
+    /*
 
     /*
     pumpController.activatePump(1, 2000);
@@ -97,6 +104,13 @@ void loop()
       Serial.println(distance);
     }
     */
+
+    if (moistSensor.readMoisture())
+    {
+        int moisture = moistSensor.getMoisture();
+        Serial.print("Moisture %: ");
+        Serial.println(moisture);
+    }
 
     Serial.println("Resetting in 3 seconds.");
     Serial.println("-------------------------");

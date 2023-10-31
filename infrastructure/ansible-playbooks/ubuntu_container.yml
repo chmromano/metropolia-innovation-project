@@ -3,17 +3,10 @@
   hosts: localhost
   gather_facts: false
   become: yes
-  # storing imput variable to later pass into the ./config.file
-  vars_prompt:
-    - name: "username"
-      prompt: Enter the name of username
-      private: false
-
-    - name: "token"
-      prompt: Enter the projects-repo token
-      private: false
-
   tasks:
+    - name: "use vars from the chamber"
+      include_vars: chamber_of_secrets.yml
+
     - name: "Install podman"
       package:
         name: podman

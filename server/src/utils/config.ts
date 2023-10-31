@@ -12,8 +12,11 @@ const MONGODB_URI =
     ? process.env.DEV_MONGODB_URI
     : null;
 
+const JWT_SECRET = process.env.JWT_SECRET;
+
 export default {
   MORGAN,
   PORT,
   MONGODB_URI,
+  JWT_SECRET,
 };

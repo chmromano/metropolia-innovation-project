@@ -9,7 +9,7 @@ updates:
       interval: "weekly"
 
   # Check for updates to npm packages every week
-  - package-ecosystem: "github-actions"
+  - package-ecosystem: "npm"
     directory: "/server"
     schedule:
       interval: "weekly"

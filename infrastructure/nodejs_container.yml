@@ -5,10 +5,10 @@
   tasks:
     - name: "Pull nodeJS image"
       ansible.builtin.command: >
-        podman pull docker.io/library/node:20
+        docker pull docker.io/library/node:20
       become: true
 
     - name: "Start nodeJS container"
       ansible.builtin.command: >
-        podman run -d --name nodejs_container docker.io/library/node:20 tail -f /dev/null
+        docker run -d --name nodejs_container docker.io/library/node:20 tail -f /dev/null
       become: true

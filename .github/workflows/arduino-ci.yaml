@@ -1,0 +1,37 @@
+name: Arduino CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  arduino-ci:
+    runs-on:
+      - ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./hardware
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install Arduino CLI
+        uses: arduino/setup-arduino-cli@v1
+
+      - name: Compile Arduino sketch
+        uses: arduino/compile-sketches@v1
+        with:
+          fqbn: "arduino:samd:mkrwifi1010"
+          libraries: |
+            - name: WiFiNINA
+          sketch-paths: |
+            - ./

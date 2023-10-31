@@ -1,22 +1,20 @@
 ---
-- name: Run a MongoDB container
+- name: "Run a MongoDB container"
   hosts: localhost
   gather_facts: no
   tasks:
-    - name: Start the MongoDB container
-      command: podman run -d --name my-mongodb -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=admin123 mongo:latest
-      ignore_errors: yes
-      register: podman_output
+    - name: "Pull MongoDB image"
+      docker_image:
+        name: mongo:4.0.4
+
+    - name: "Start the MongoDB container"
+      command: docker run -d --name my-mongodb -p 27017:27017 mongo:4.0.4
+      ignoring_errors: yes
+      register: docker_output
       changed_when: "'container already exists' not in podman_output.stdout"
 
-    - name: Wait for MongoDB container to be up
+    - name: "Wait for MongoDB container to be up"
       wait_for:
         host: localhost
         port: 27017
         timeout: 60
-
-- name: Configure MongoDB
-  hosts: localhost
-  tasks:
-    - name: Create a sample database
-      shell: podman exec my-mongodb mongo admin --eval "db.createCollection('sample')"

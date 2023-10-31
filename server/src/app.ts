@@ -15,8 +15,6 @@ morgan.token("request-body", (request: Request) =>
   JSON.stringify(request.body)
 );
 
-// TODO: check if needed - app.use("/api/plants", plantsRouter);
-
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 

@@ -12,10 +12,6 @@ const MONGODB_URI =
     ? process.env.DEV_MONGODB_URI
     : null;
 
-// TODO: check if needed - const TREFLE_TOKEN = process.env.TREFLE_TOKEN;
-
-// TODO: check if needed - const PERENUAL_KEY = process.env.PERENUAL_KEY;
-
 export default {
   MORGAN,
   PORT,

@@ -1,7 +1,13 @@
 import { Schema, model } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
-const schema = new Schema({
+interface IDevice extends Document {
+  hardwareId: string;
+  user: Schema.Types.ObjectId;
+  plants: Schema.Types.ObjectId[];
+}
+
+const schema = new Schema<IDevice>({
   hardwareId: {
     type: String,
     required: true,
@@ -22,6 +28,6 @@ const schema = new Schema({
 
 schema.plugin(uniqueValidator);
 
-const Device = model("Device", schema);
+const Device = model<IDevice>("Device", schema);
 
 export default Device;

@@ -12,11 +12,14 @@ const MONGODB_URI =
     ? process.env.DEV_MONGODB_URI
     : null;
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const EMBEDDED_DEVICE_JWT_SECRET = process.env.EMBEDDED_DEVICE_JWT_SECRET;
+
+const MOBILE_APP_JWT_SECRET = process.env.MOBILE_APP_JWT_SECRET;
 
 export default {
   MORGAN,
   PORT,
   MONGODB_URI,
-  JWT_SECRET,
+  EMBEDDED_DEVICE_JWT_SECRET,
+  MOBILE_APP_JWT_SECRET,
 };

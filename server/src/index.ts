@@ -16,7 +16,6 @@ import { WebSocketServer } from "ws";
 import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/schema";
 import User from "./models/user";
-import initialiseDatabase from "./tests/initialiseDatabase";
 import config from "./utils/config";
 import logger from "./utils/logger";
 import middleware from "./utils/middleware";
@@ -26,16 +25,9 @@ mongoose.set("strictQuery", false);
 logger.info("connecting to", config.MONGODB_URI);
 
 if (typeof config.MONGODB_URI === "string") {
-  mongoose
-    .connect(config.MONGODB_URI)
-    .then(() => {
-      initialiseDatabase().catch((error) => {
-        logger.error("error initializing the database:", error.message);
-      });
-    })
-    .catch((error) => {
-      logger.error("error connection to MongoDB:", error.message);
-    });
+  mongoose.connect(config.MONGODB_URI).catch((error) => {
+    logger.error("error connection to MongoDB:", error.message);
+  });
 } else {
   logger.error("MONGODB_URI is not defined in the environment variables");
 }
@@ -83,26 +75,61 @@ const start = async () => {
   app.use(
     "/",
     cors(),
-    express.json(),
+    json(),
     expressMiddleware(server, {
       context: async ({ req }) => {
         const auth = req ? req.headers.authorization : null;
+        let currentUser: string;
+        let clientType: string;
+        let currentDevice: string;
 
+        const clientTypeHeader = req.headers["x-client-type"];
         if (
-          auth &&
-          auth.startsWith("Bearer ") &&
-          typeof config.JWT_SECRET === "string"
+          clientTypeHeader === "embedded-device" ||
+          clientTypeHeader === "mobile-app"
         ) {
-          const decodedToken = jwt.verify(auth.substring(7), config.JWT_SECRET);
+          clientType = clientTypeHeader;
+        } else {
+          logger.warn("Missing or invalid X-Client-Type header");
+          return {};
+        }
 
-          if (typeof decodedToken !== "string" && decodedToken.id) {
-            const currentUser = await User.findById(decodedToken.id);
+        if (auth && auth.startsWith("Bearer ")) {
+          try {
+            const token = auth.substring(7);
+            let secretKey;
 
-            return { currentUser };
+            // Choose the secret key based on the client type
+            if (
+              clientType === "embedded-device" &&
+              typeof config.EMBEDDED_DEVICE_JWT_SECRET === "string"
+            ) {
+              secretKey = config.EMBEDDED_DEVICE_JWT_SECRET;
+            } else if (
+              clientType === "mobile-app" &&
+              typeof config.MOBILE_APP_JWT_SECRET === "string"
+            ) {
+              secretKey = config.MOBILE_APP_JWT_SECRET;
+            }
+
+            if (secretKey) {
+              const decodedToken = jwt.verify(token, secretKey);
+
+              if (
+                typeof decodedToken === "object" &&
+                decodedToken.userId &&
+                decodedToken.currentDevice
+              ) {
+                currentUser = await User.findById(decodedToken.userId);
+                currentDevice = decodedToken.currentDevice;
+              }
+            }
+          } catch (error) {
+            console.error("Token verification failed", error);
           }
         }
 
-        return {};
+        return { currentUser, clientType, currentDevice };
       },
     })
   );

@@ -1,7 +1,13 @@
 import { Schema, model } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
-const schema = new Schema(
+interface ITankMeasurement extends Document {
+  tankLevel: number;
+  timestamp: Date;
+  metadata: Schema.Types.ObjectId;
+}
+
+const schema = new Schema<ITankMeasurement>(
   {
     tankLevel: {
       type: Number,
@@ -28,6 +34,6 @@ const schema = new Schema(
 
 schema.plugin(uniqueValidator);
 
-const TankMeasurement = model("TankMeasurement", schema);
+const TankMeasurement = model<ITankMeasurement>("TankMeasurement", schema);
 
 export default TankMeasurement;

@@ -1,7 +1,13 @@
 import { Schema, model } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
-const schema = new Schema(
+interface IPlantMeasurement extends Document {
+  humidity: number;
+  timestamp: Date;
+  metadata: Schema.Types.ObjectId;
+}
+
+const schema = new Schema<IPlantMeasurement>(
   {
     humidity: {
       type: Number,
@@ -28,6 +34,6 @@ const schema = new Schema(
 
 schema.plugin(uniqueValidator);
 
-const PlantMeasurement = model("PlantMeasurement", schema);
+const PlantMeasurement = model<IPlantMeasurement>("PlantMeasurement", schema);
 
 export default PlantMeasurement;

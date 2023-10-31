@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: no
   tasks:
-    - name: "Run ubuntu playbook"
-      import_playbook: ubuntu-playbook.yaml
-    - name: "Run nodejs container"
-      import_playbook: nodejs.yaml
+    - name: "Run nodesj container"
+      import_playbook: nodejs_container.yml
+    - name: "Run mongo container"
+      import_playbook: mongodb_container.yml

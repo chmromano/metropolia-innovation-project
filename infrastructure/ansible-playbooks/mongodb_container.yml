@@ -6,7 +6,8 @@
     - name: "Pull MongoDB image"
       docker_image:
         name: mongo:4.0.4
-
+      # username and password can be added
+      # -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=admin123
     - name: "Start the MongoDB container"
       command: docker run -d --name my-mongodb -p 27017:27017 mongo:4.0.4
       ignoring_errors: yes

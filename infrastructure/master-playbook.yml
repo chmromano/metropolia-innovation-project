@@ -1,9 +1,4 @@
 ---
-- name: "Run all the playbooks"
-  hosts: localhost
-  gather_facts: no
-  tasks:
-    - name: "Run nodesj container"
-      import_playbook: nodejs_container.yml
-    - name: "Run mongo container"
-      import_playbook: mongodb_container.yml
+- import_tasks: for-config-mongo.yml
+- import_tasks: for-host-mongo.yml
+- import_tasks: for-container-mongo.yml

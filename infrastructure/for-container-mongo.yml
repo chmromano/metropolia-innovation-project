@@ -1,0 +1,31 @@
+---
+- name: 'Pull mongodb image'
+  docker_image:
+    name: mongo
+    tag: 4.0.4
+
+- name: 'Create data container'
+  docker_container:
+    name: irrigation-system-data
+    image: mongo:4.0.4
+    state: present
+
+- name: 'Run mongodb container'
+  docker_container:
+    name: irrigation-system-data
+    image: mongo:4.0.4
+    restart_policy: always
+    state: started
+    memory: 500
+    env: '{{ mongodb_env | combine(mongodb_auth_env) }}'
+    volumes: '{{ mongodb_volumes + [mongodb_users_config_mount] }}'
+    volumes_from:
+      - '{{ mongodb_container_name }}-data'
+    ports:
+      - '{{ mongodb_port }}:{{ mongodb_internal_port }}'
+  register: mongodb_container
+
+- name: 'Wait for mongodb to start up'
+  wait_for:
+    port: '{{ mongodb_port }}'
+    delay: 5

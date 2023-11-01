@@ -1,0 +1,19 @@
+---
+- name: 'Environment with Auth'
+  set_fact:
+    mongodb_auth_env:
+      MONGO_INITDB_ROOT_USERNAME: '{{ mongodb_admin_user | mandatory }}'
+      MONGO_INITDB_ROOT_PASSWORD: '{{ mongodb_admin_password | mandatory }}'
+  when: mongodb_auth
+
+- name: 'Init database'
+  set_fact:
+    mongodb_auth_env: '{{ mongodb_auth_env | combine({"MONGO_INITDB_DATABASE":mongodb_db}) }}'
+  when: mongodb_db is defined
+
+- name: 'Render config directories'
+  file:
+    path: "{{ mongodb_settings_path + '/' | dirname }}"
+    state: directory
+    recurse: yes
+

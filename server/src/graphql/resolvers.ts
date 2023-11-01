@@ -1,12 +1,11 @@
 import { GraphQLError } from "graphql";
-import { Schema } from "mongoose";
 
-import Device from "../models/device";
+import { IDevice } from "../models/device";
 import TemperatureMeasurement from "../models/temperatureMeasurement";
-import { isNumber } from "../typeNarrowing";
+import { isNumber } from "../types/typeUtils";
 
 interface Context {
-  currentDevice: string;
+  currentDevice: IDevice;
 }
 
 interface Args {
@@ -14,12 +13,20 @@ interface Args {
 }
 
 const resolvers = {
-  Query: {},
+  Query: {
+    allTemperatureMeasurements: () => {
+      return "HELLO";
+    },
+  },
 
   Mutation: {
-    addTemperature: async (_root: unknown, args: Args, context: Context) => {
-      const hardwareId = context.currentDevice;
-      if (!hardwareId) {
+    addTemperatureMeasurement: async (
+      _root: unknown,
+      args: Args,
+      context: Context
+    ) => {
+      const device = context.currentDevice;
+      if (!device) {
         throw new GraphQLError("not authenticated", {
           extensions: {
             code: "BAD_USER_INPUT",
@@ -29,7 +36,7 @@ const resolvers = {
 
       const temperature = args.temperature;
       if (!isNumber(temperature)) {
-        throw new GraphQLError("not authenticated", {
+        throw new GraphQLError("invalid temperature", {
           extensions: {
             code: "BAD_USER_INPUT",
             invalidArgs: args.temperature,
@@ -37,47 +44,33 @@ const resolvers = {
         });
       }
 
-      const device = await Device.findOne({
-        hardwareId,
-      }).exec();
-      if (!device) {
-        throw new GraphQLError("not authenticated", {
-          extensions: {
-            code: "INTERNAL_SERVER_ERROR",
-          },
-        });
-      }
-
-      const timestamp: Date = new Date();
-      const metadata = device._id;
-
       const temperatureMeasurement = new TemperatureMeasurement({
         temperature,
-        timestamp,
-        metadata,
+        timestamp: new Date(),
+        metadata: device._id,
       });
 
       await temperatureMeasurement.save();
     },
-    login: async (_root, args) => {
-      const user = await User.findOne({ username: args.username });
+    // login: async (_root, args) => {
+    //   const user = await User.findOne({ username: args.username });
 
-      if (!user || args.password !== "secret") {
-        throw new GraphQLError("wrong credentials", {
-          extensions: { code: "BAD_USER_INPUT" },
-        });
-      }
+    //   if (!user || args.password !== "secret") {
+    //     throw new GraphQLError("wrong credentials", {
+    //       extensions: { code: "BAD_USER_INPUT" },
+    //     });
+    //   }
 
-      const userForToken = {
-        username: user.username,
-        id: user._id,
-      };
+    //   const userForToken = {
+    //     username: user.username,
+    //     id: user._id,
+    //   };
 
-      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
-    },
+    //   return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
+    // },
   },
 
-  Subscription: {},
+  // Subscription: {},
 };
 
 export default resolvers;

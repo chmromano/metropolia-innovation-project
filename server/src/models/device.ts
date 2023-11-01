@@ -1,7 +1,8 @@
 import { Schema, model } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
-interface IDevice extends Document {
+export interface IDevice extends Document {
+  _id: Schema.Types.ObjectId;
   hardwareId: string;
   user: Schema.Types.ObjectId;
   plants: Schema.Types.ObjectId[];

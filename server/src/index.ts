@@ -1,4 +1,3 @@
-import "express-async-errors";
 import http from "http";
 
 import { ApolloServer } from "@apollo/server";
@@ -8,31 +7,31 @@ import { makeExecutableSchema } from "@graphql-tools/schema";
 import cors from "cors";
 import express, { Request, json } from "express";
 import { useServer } from "graphql-ws/lib/use/ws";
-import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import morgan from "morgan";
 import { WebSocketServer } from "ws";
 
 import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/schema";
+import Device, { IDevice } from "./models/device";
 import User from "./models/user";
+import { isString } from "./types/typeUtils";
+import authUtils from "./utils/authUtils";
 import config from "./utils/config";
 import logger from "./utils/logger";
 import middleware from "./utils/middleware";
 
 mongoose.set("strictQuery", false);
+mongoose.set("debug", true);
 
-logger.info("connecting to", config.MONGODB_URI);
-
-if (typeof config.MONGODB_URI === "string") {
+if (isString(config.MONGODB_URI)) {
+  logger.info("connecting to", config.MONGODB_URI);
   mongoose.connect(config.MONGODB_URI).catch((error) => {
     logger.error("error connection to MongoDB:", error.message);
   });
 } else {
   logger.error("MONGODB_URI is not defined in the environment variables");
 }
-
-mongoose.set("debug", true);
 
 const start = async () => {
   const app = express();
@@ -78,58 +77,33 @@ const start = async () => {
     json(),
     expressMiddleware(server, {
       context: async ({ req }) => {
-        const auth = req ? req.headers.authorization : null;
-        let currentUser: string;
-        let clientType: string;
-        let currentDevice: string;
+        try {
+          const token = authUtils.getAuthTokenFromHeader(req.headers);
+          const clientType = authUtils.getClientTypeFromHeader(req.headers);
+          const decodedToken = authUtils.decodeTokenBasedOnClientType(
+            token,
+            clientType
+          );
 
-        const clientTypeHeader = req.headers["x-client-type"];
-        if (
-          clientTypeHeader === "embedded-device" ||
-          clientTypeHeader === "mobile-app"
-        ) {
-          clientType = clientTypeHeader;
-        } else {
-          logger.warn("Missing or invalid X-Client-Type header");
-          return {};
-        }
+          const currentUser = await User.findById(decodedToken.userId).exec();
+          let currentDevice: IDevice | null = null;
 
-        if (auth && auth.startsWith("Bearer ")) {
-          try {
-            const token = auth.substring(7);
-            let secretKey;
-
-            // Choose the secret key based on the client type
-            if (
-              clientType === "embedded-device" &&
-              typeof config.EMBEDDED_DEVICE_JWT_SECRET === "string"
-            ) {
-              secretKey = config.EMBEDDED_DEVICE_JWT_SECRET;
-            } else if (
-              clientType === "mobile-app" &&
-              typeof config.MOBILE_APP_JWT_SECRET === "string"
-            ) {
-              secretKey = config.MOBILE_APP_JWT_SECRET;
-            }
-
-            if (secretKey) {
-              const decodedToken = jwt.verify(token, secretKey);
-
-              if (
-                typeof decodedToken === "object" &&
-                decodedToken.userId &&
-                decodedToken.currentDevice
-              ) {
-                currentUser = await User.findById(decodedToken.userId);
-                currentDevice = decodedToken.currentDevice;
-              }
-            }
-          } catch (error) {
-            console.error("Token verification failed", error);
+          if (decodedToken.type === "EmbeddedDeviceToken") {
+            currentDevice = await Device.findById(
+              decodedToken.hardwareId
+            ).exec();
           }
+
+          return { currentUser, currentDevice };
+        } catch (error: unknown) {
+          let errorMessage = "Something went wrong.";
+          if (error instanceof Error) {
+            errorMessage += ` Error: ${error.message}`;
+          }
+          logger.error(errorMessage);
         }
 
-        return { currentUser, clientType, currentDevice };
+        return {};
       },
     })
   );

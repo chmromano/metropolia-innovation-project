@@ -8,7 +8,6 @@ import cors from "cors";
 import express, { json } from "express";
 import { useServer } from "graphql-ws/lib/use/ws";
 import mongoose from "mongoose";
-// import morgan from "morgan";
 import { WebSocketServer } from "ws";
 
 import resolvers from "./graphql/resolvers";
@@ -16,7 +15,6 @@ import typeDefs from "./graphql/schema";
 import Device, { IDevice } from "./models/device";
 import User from "./models/user";
 import initialiseDatabase from "./tests/initialiseDatabase";
-import { isString } from "./types/typeUtils";
 import authUtils from "./utils/authUtils";
 import config from "./utils/config";
 import logger from "./utils/logger";
@@ -27,26 +25,18 @@ if (config.NODE_ENV === "development" || config.NODE_ENV === "test") {
   mongoose.set("debug", true);
 }
 
-if (isString(config.MONGODB_URI)) {
-  logger.info("connecting to", config.MONGODB_URI);
-  mongoose
-    .connect(config.MONGODB_URI)
-    .then(() => initialiseDatabase())
-    .catch((error) => {
-      logger.error("error connection to MongoDB:", error.message);
-    });
-} else {
-  logger.error("MONGODB_URI is not defined in the environment variables");
-}
+logger.info("connecting to", config.MONGODB_URI);
+mongoose
+  .connect(config.MONGODB_URI)
+  .then(() => initialiseDatabase())
+  .catch((error) => {
+    logger.error("error connection to MongoDB:", error.message);
+  });
 
 const start = async () => {
   const app = express();
   app.use(cors());
   app.use(json());
-  // app.use(morgan(config.MORGAN));
-  // morgan.token("request-body", (request: Request) =>
-  //   JSON.stringify(request.body)
-  // );
 
   const httpServer = http.createServer(app);
 

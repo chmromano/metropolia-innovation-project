@@ -7,7 +7,7 @@ import Plant from "../../../models/plant";
 import PlantMeasurement from "../../../models/plantMeasurement";
 import { IUser } from "../../../models/user";
 import { EmbeddedDeviceToken } from "../../../types/types";
-import { isNumber, isString } from "../../../types/typeUtils";
+import { isNumber } from "../../../types/typeUtils";
 import config from "../../../utils/config";
 
 interface Context {
@@ -33,6 +33,16 @@ export const addDevice = async (
     });
   }
 
+  const supportedPlants = args.supportedPlants;
+  if (!isNumber(supportedPlants)) {
+    throw new GraphQLError("invalid temperature", {
+      extensions: {
+        code: "BAD_USER_INPUT",
+        invalidArgs: args.supportedPlants,
+      },
+    });
+  }
+
   const hardwareId = args.hardwareId;
   const existingDevice = await Device.findOne({ hardwareId });
   if (existingDevice) {
@@ -46,23 +56,13 @@ export const addDevice = async (
     await Promise.all(deletionPromises);
   }
 
-  const supportedPlants = args.supportedPlants;
-  if (!isNumber(supportedPlants)) {
-    throw new GraphQLError("invalid temperature", {
-      extensions: {
-        code: "BAD_USER_INPUT",
-        invalidArgs: args.supportedPlants,
-      },
-    });
-  }
-
   const newDevice = new Device({ user: user._id, hardwareId });
   await newDevice.save();
 
   const plantsToAdd = Array.from({ length: supportedPlants }, (_, index) => {
     return {
       device: newDevice._id,
-      name: `Plant n. ${index}`,
+      name: "",
       pump: index + 1,
     };
   });
@@ -79,14 +79,6 @@ export const addDevice = async (
     firebaseUid: user.firebaseUid,
     hardwareId,
   };
-
-  if (!isString(config.EMBEDDED_DEVICE_JWT_SECRET)) {
-    throw new GraphQLError("something went very wrong", {
-      extensions: {
-        code: "INTERNAL_SERVER_ERROR",
-      },
-    });
-  }
 
   return { value: jwt.sign(token, config.EMBEDDED_DEVICE_JWT_SECRET) };
 };

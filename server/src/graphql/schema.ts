@@ -10,7 +10,7 @@ const typeDefs = /* GraphQL */ `
     id: ID!
     name: String!
     device: Device!
-    pump: Int!
+    plantIndex: Int!
   }
 
   type PlantMeasurement {
@@ -47,10 +47,8 @@ const typeDefs = /* GraphQL */ `
       tankLevel: Float!
     ): DeviceMeasurement
     addDevice(hardwareId: String!, supportedPlants: Int!): Token
+    addPlantMeasurement(hardwareId: String!, plantIndex: Int!): PlantMeasurement
   }
-
-  # type Subscription {
-  # }
 `;
 
 export default typeDefs;

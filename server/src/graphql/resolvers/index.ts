@@ -1,5 +1,6 @@
 import { addDevice } from "./mutations/addDevice";
 import { addDeviceMeasurement } from "./mutations/addDeviceMeasurement";
+import { addPlantMeasurement } from "./mutations/addPlantMeasurement";
 
 const resolvers = {
   Query: {
@@ -11,25 +12,8 @@ const resolvers = {
   Mutation: {
     addDevice: addDevice,
     addDeviceMeasurement: addDeviceMeasurement,
-    // login: async (_root, args) => {
-    //   const user = await User.findOne({ username: args.username });
-
-    //   if (!user || args.password !== "secret") {
-    //     throw new GraphQLError("wrong credentials", {
-    //       extensions: { code: "BAD_USER_INPUT" },
-    //     });
-    //   }
-
-    //   const userForToken = {
-    //     username: user.username,
-    //     id: user._id,
-    //   };
-
-    //   return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
-    // },
+    addPlantMeasurement: addPlantMeasurement,
   },
-
-  // Subscription: {},
 };
 
 export default resolvers;

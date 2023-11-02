@@ -5,7 +5,7 @@ export interface IPlant extends Document {
   _id: Schema.Types.ObjectId;
   name: string;
   device: Schema.Types.ObjectId;
-  pump: number;
+  plantIndex: number;
 }
 
 const schema = new Schema<IPlant>({
@@ -18,7 +18,7 @@ const schema = new Schema<IPlant>({
     ref: "Device",
     required: true,
   },
-  pump: {
+  plantIndex: {
     type: Number,
     required: true,
   },

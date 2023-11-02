@@ -63,7 +63,7 @@ export const addDevice = async (
     return {
       device: newDevice._id,
       name: "",
-      pump: index + 1,
+      plantIndex: index + 1,
     };
   });
 

@@ -1,9 +1,11 @@
 import { Schema, model } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
-interface IPlant extends Document {
+export interface IPlant extends Document {
+  _id: Schema.Types.ObjectId;
   name: string;
   device: Schema.Types.ObjectId;
+  pump: number;
 }
 
 const schema = new Schema<IPlant>({
@@ -14,6 +16,10 @@ const schema = new Schema<IPlant>({
   device: {
     type: Schema.Types.ObjectId,
     ref: "Device",
+    required: true,
+  },
+  pump: {
+    type: Number,
     required: true,
   },
 });

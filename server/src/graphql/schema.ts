@@ -10,10 +10,11 @@ const typeDefs = /* GraphQL */ `
     id: ID!
     name: String!
     device: Device!
+    pump: Int!
   }
 
   type PlantMeasurement {
-    humidity: Float!
+    soilMoisture: Float!
     timestamp: String!
     metadata: Plant!
   }
@@ -32,9 +33,9 @@ const typeDefs = /* GraphQL */ `
     devices: [Device!]!
   }
 
-  # type Token {
-  #   value: String!
-  # }
+  type Token {
+    value: String!
+  }
 
   type Query {
     allTemperatureMeasurements: String!
@@ -45,6 +46,7 @@ const typeDefs = /* GraphQL */ `
       temperature: Float!
       tankLevel: Float!
     ): DeviceMeasurement
+    addDevice(hardwareId: String!, supportedPlants: Int!): Token
   }
 
   # type Subscription {

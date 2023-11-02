@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
 export interface IUser extends Document {
+  _id: Schema.Types.ObjectId;
   firebaseUid: string;
   displayName: string;
   devices: Schema.Types.ObjectId[];

@@ -1,4 +1,5 @@
-import { addDeviceMeasurement } from "./resolvers/mutations/addDeviceMeasurement";
+import { addDevice } from "./mutations/addDevice";
+import { addDeviceMeasurement } from "./mutations/addDeviceMeasurement";
 
 const resolvers = {
   Query: {
@@ -8,6 +9,7 @@ const resolvers = {
   },
 
   Mutation: {
+    addDevice: addDevice,
     addDeviceMeasurement: addDeviceMeasurement,
     // login: async (_root, args) => {
     //   const user = await User.findOne({ username: args.username });

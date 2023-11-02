@@ -29,7 +29,7 @@ const isEmbeddedDeviceToken = (
     param !== null &&
     typeof param === "object" &&
     "type" in param &&
-    "userId" in param &&
+    "firebaseUid" in param &&
     "hardwareId" in param &&
     param.type === "EmbeddedDeviceToken"
   );
@@ -40,7 +40,7 @@ export const parseEmbeddedDeviceToken = (
 ): EmbeddedDeviceToken => {
   if (
     !isEmbeddedDeviceToken(embeddedDeviceToken) ||
-    !isString(embeddedDeviceToken.userId) ||
+    !isString(embeddedDeviceToken.firebaseUid) ||
     !isString(embeddedDeviceToken.hardwareId)
   ) {
     throw new Error(
@@ -58,7 +58,7 @@ const isMobileAppToken = (param: unknown): param is MobileAppToken => {
     param !== null &&
     typeof param === "object" &&
     "type" in param &&
-    "userId" in param &&
+    "firebaseUid" in param &&
     param.type === "MobileAppToken"
   );
 };
@@ -66,7 +66,10 @@ const isMobileAppToken = (param: unknown): param is MobileAppToken => {
 export const parseMobileAppToken = (
   mobileAppToken: unknown
 ): MobileAppToken => {
-  if (!isMobileAppToken(mobileAppToken) || !isString(mobileAppToken.userId)) {
+  if (
+    !isMobileAppToken(mobileAppToken) ||
+    !isString(mobileAppToken.firebaseUid)
+  ) {
     throw new Error(
       `Incorrect or missing token for embedded device: ${JSON.stringify(
         mobileAppToken

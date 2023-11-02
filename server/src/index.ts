@@ -5,16 +5,17 @@ import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import cors from "cors";
-import express, { Request, json } from "express";
+import express, { json } from "express";
 import { useServer } from "graphql-ws/lib/use/ws";
 import mongoose from "mongoose";
-import morgan from "morgan";
+// import morgan from "morgan";
 import { WebSocketServer } from "ws";
 
 import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/schema";
 import Device, { IDevice } from "./models/device";
 import User from "./models/user";
+import initialiseDatabase from "./tests/initialiseDatabase";
 import { isString } from "./types/typeUtils";
 import authUtils from "./utils/authUtils";
 import config from "./utils/config";
@@ -22,13 +23,18 @@ import logger from "./utils/logger";
 import middleware from "./utils/middleware";
 
 mongoose.set("strictQuery", false);
-mongoose.set("debug", true);
+if (config.NODE_ENV === "development" || config.NODE_ENV === "test") {
+  mongoose.set("debug", true);
+}
 
 if (isString(config.MONGODB_URI)) {
   logger.info("connecting to", config.MONGODB_URI);
-  mongoose.connect(config.MONGODB_URI).catch((error) => {
-    logger.error("error connection to MongoDB:", error.message);
-  });
+  mongoose
+    .connect(config.MONGODB_URI)
+    .then(() => initialiseDatabase())
+    .catch((error) => {
+      logger.error("error connection to MongoDB:", error.message);
+    });
 } else {
   logger.error("MONGODB_URI is not defined in the environment variables");
 }
@@ -37,10 +43,10 @@ const start = async () => {
   const app = express();
   app.use(cors());
   app.use(json());
-  app.use(morgan(config.MORGAN));
-  morgan.token("request-body", (request: Request) =>
-    JSON.stringify(request.body)
-  );
+  // app.use(morgan(config.MORGAN));
+  // morgan.token("request-body", (request: Request) =>
+  //   JSON.stringify(request.body)
+  // );
 
   const httpServer = http.createServer(app);
 
@@ -85,13 +91,15 @@ const start = async () => {
             clientType
           );
 
-          const currentUser = await User.findById(decodedToken.userId).exec();
+          const currentUser = await User.findOne({
+            firebaseUid: decodedToken.firebaseUid,
+          }).exec();
           let currentDevice: IDevice | null = null;
 
           if (decodedToken.type === "EmbeddedDeviceToken") {
-            currentDevice = await Device.findById(
-              decodedToken.hardwareId
-            ).exec();
+            currentDevice = await Device.findOne({
+              hardwareId: decodedToken.hardwareId,
+            }).exec();
           }
 
           return { currentUser, currentDevice };

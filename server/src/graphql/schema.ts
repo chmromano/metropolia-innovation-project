@@ -18,20 +18,16 @@ const typeDefs = /* GraphQL */ `
     metadata: Plant!
   }
 
-  type TankMeasurement {
-    tankLevel: Float!
-    timestamp: String!
-    metadata: Device!
-  }
-
-  type TemperatureMeasurement {
+  type DeviceMeasurement {
     temperature: Float!
+    tankLevel: Float!
     timestamp: String!
     metadata: Device!
   }
 
   type User {
     id: ID!
+    firebaseUid: String!
     name: String!
     devices: [Device!]!
   }
@@ -45,7 +41,10 @@ const typeDefs = /* GraphQL */ `
   }
 
   type Mutation {
-    addTemperatureMeasurement(temperature: Float!): TemperatureMeasurement
+    addDeviceMeasurement(
+      temperature: Float!
+      tankLevel: Float!
+    ): DeviceMeasurement
   }
 
   # type Subscription {

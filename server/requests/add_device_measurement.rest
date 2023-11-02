@@ -1,0 +1,9 @@
+POST http://localhost:3000/ HTTP/1.1
+content-type: application/json
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJlYmFzZVVpZCI6InRlc3RfZmlyZWJhc2VfdWlkIiwidHlwZSI6IkVtYmVkZGVkRGV2aWNlVG9rZW4iLCJoYXJkd2FyZUlkIjoidGVzdF9oYXJkd2FyZV9pZCIsImlhdCI6MTY5ODg1MDM4MH0.H9yVXcfhHaouNxtVkzBd0uwnSkMFqSjaafDI7DrjUfk
+x-client-type: embedded-device
+
+{
+  "query": "mutation AddDeviceMeasurement($temperature: Float!, $tankLevel: Float!) { addDeviceMeasurement(temperature: $temperature, tankLevel: $tankLevel) { timestamp temperature tankLevel metadata { hardwareId } } }",
+  "variables": { "temperature": 25, "tankLevel": 20 }
+}

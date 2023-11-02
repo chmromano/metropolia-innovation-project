@@ -1,12 +1,18 @@
 import { Schema, model } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
-interface IUser extends Document {
+export interface IUser extends Document {
+  firebaseUid: string;
   displayName: string;
   devices: Schema.Types.ObjectId[];
 }
 
 const schema = new Schema<IUser>({
+  firebaseUid: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   displayName: {
     type: String,
     required: true,

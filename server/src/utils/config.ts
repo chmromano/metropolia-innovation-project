@@ -1,22 +1,30 @@
 const MORGAN =
   ":method :url :status :res[content-length] - :response-time ms :request-body";
 
-const PORT = process.env.PORT;
+const PORT = Number(process.env.PORT);
+const HOST = process.env.HOST;
+
+const NODE_ENV = process.env.NODE_ENV;
 
 const MONGODB_URI =
-  process.env.NODE_ENV === "test"
+  NODE_ENV === "test"
     ? process.env.TEST_MONGODB_URI
-    : process.env.NODE_ENV === "production"
+    : NODE_ENV === "production"
     ? process.env.PROD_MONGODB_URI
-    : process.env.NODE_ENV === "development"
+    : NODE_ENV === "development"
     ? process.env.DEV_MONGODB_URI
     : null;
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const EMBEDDED_DEVICE_JWT_SECRET = process.env.EMBEDDED_DEVICE_JWT_SECRET;
+
+const MOBILE_APP_JWT_SECRET = process.env.MOBILE_APP_JWT_SECRET;
 
 export default {
   MORGAN,
   PORT,
+  HOST,
+  NODE_ENV,
   MONGODB_URI,
-  JWT_SECRET,
+  EMBEDDED_DEVICE_JWT_SECRET,
+  MOBILE_APP_JWT_SECRET,
 };

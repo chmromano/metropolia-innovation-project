@@ -3,7 +3,7 @@ const typeDefs = /* GraphQL */ `
     id: ID!
     hardwareId: String!
     user: User!
-    plants: [Plants!]!
+    plants: [Plant!]!
   }
 
   type Plant {
@@ -12,44 +12,43 @@ const typeDefs = /* GraphQL */ `
     device: Device!
   }
 
-  type plantMeasurement {
-    humidity: Number!
+  type PlantMeasurement {
+    humidity: Float!
     timestamp: String!
     metadata: Plant!
   }
 
-  type tankMeasurement {
-    tankLevel: Number!
-    timestamp: String!
-    metadata: Device!
-  }
-
-  type temperatureMeasurement {
-    temperature: Number!
+  type DeviceMeasurement {
+    temperature: Float!
+    tankLevel: Float!
     timestamp: String!
     metadata: Device!
   }
 
   type User {
     id: ID!
+    firebaseUid: String!
     name: String!
-    devices: [Devices!]!
+    devices: [Device!]!
   }
 
-  type Token {
-    value: String!
-  }
+  # type Token {
+  #   value: String!
+  # }
 
   type Query {
-    me: User
+    allTemperatureMeasurements: String!
   }
 
   type Mutation {
-    addTemperatureMeasurement(temperature: string!): TemperatureMeasurement
+    addDeviceMeasurement(
+      temperature: Float!
+      tankLevel: Float!
+    ): DeviceMeasurement
   }
 
-  type Subscription {
-  }
+  # type Subscription {
+  # }
 `;
 
 export default typeDefs;

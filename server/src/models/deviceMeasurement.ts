@@ -1,9 +1,20 @@
 import { Schema, model } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
-const schema = new Schema(
+interface IDeviceMeasurement extends Document {
+  temperature: number;
+  tankLevel: number;
+  timestamp: Date;
+  metadata: Schema.Types.ObjectId;
+}
+
+const schema = new Schema<IDeviceMeasurement>(
   {
     temperature: {
+      type: Number,
+      required: true,
+    },
+    tankLevel: {
       type: Number,
       required: true,
     },
@@ -28,6 +39,9 @@ const schema = new Schema(
 
 schema.plugin(uniqueValidator);
 
-const TemperatureMeasurement = model("TemperatureMeasurement", schema);
+const DeviceMeasurement = model<IDeviceMeasurement>(
+  "DeviceMeasurement",
+  schema
+);
 
-export default TemperatureMeasurement;
+export default DeviceMeasurement;

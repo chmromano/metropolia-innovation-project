@@ -1,7 +1,18 @@
 import { Schema, model } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
-const schema = new Schema({
+export interface IUser extends Document {
+  firebaseUid: string;
+  displayName: string;
+  devices: Schema.Types.ObjectId[];
+}
+
+const schema = new Schema<IUser>({
+  firebaseUid: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   displayName: {
     type: String,
     required: true,
@@ -16,6 +27,6 @@ const schema = new Schema({
 
 schema.plugin(uniqueValidator);
 
-const User = model("User", schema);
+const User = model<IUser>("User", schema);
 
 export default User;

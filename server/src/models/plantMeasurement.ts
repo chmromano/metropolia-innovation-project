@@ -2,14 +2,14 @@ import { Schema, model } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
 
 interface IPlantMeasurement extends Document {
-  humidity: number;
+  soilMoisture: number;
   timestamp: Date;
   metadata: Schema.Types.ObjectId;
 }
 
 const schema = new Schema<IPlantMeasurement>(
   {
-    humidity: {
+    soilMoisture: {
       type: Number,
       required: true,
     },

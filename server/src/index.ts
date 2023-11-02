@@ -118,7 +118,7 @@ const start = async () => {
   app.use(middleware.unknownEndpoint);
   app.use(middleware.errorHandler);
 
-  httpServer.listen(config.PORT, () =>
+  httpServer.listen(config.PORT, config.HOST, () =>
     logger.info(`Server is now running on http://localhost:${config.PORT}`)
   );
 };

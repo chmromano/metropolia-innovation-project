@@ -48,6 +48,7 @@ const typeDefs = /* GraphQL */ `
     ): DeviceMeasurement
     addDevice(hardwareId: String!, supportedPlants: Int!): Token
     addPlantMeasurement(hardwareId: String!, plantIndex: Int!): PlantMeasurement
+    editPlant(plant: String!, name: String, wateringLevel: Int): Plant!
   }
 `;
 

@@ -1,4 +1,9 @@
-import { ClientType, EmbeddedDeviceToken, MobileAppToken } from "./types";
+import {
+  ClientType,
+  EmbeddedDeviceToken,
+  MobileAppToken,
+  WateringLevel,
+} from "./types";
 
 export const isNumber = (number: unknown): number is number => {
   return typeof number === "number" && !isNaN(number) && isFinite(number);
@@ -78,4 +83,16 @@ export const parseMobileAppToken = (
   }
 
   return mobileAppToken;
+};
+
+const isWateringLevel = (param: number): param is WateringLevel => {
+  return Object.values(WateringLevel).includes(param);
+};
+
+export const parseWateringLevel = (wateringLevel: unknown): WateringLevel => {
+  if (!isNumber(wateringLevel) || !isWateringLevel(wateringLevel)) {
+    throw new Error(`Incorrect or missing watering level: ${wateringLevel}`);
+  }
+
+  return wateringLevel;
 };

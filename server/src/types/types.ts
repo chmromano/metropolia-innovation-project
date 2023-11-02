@@ -17,3 +17,10 @@ export interface EmbeddedDeviceToken extends BaseToken {
 }
 
 export type Token = MobileAppToken | EmbeddedDeviceToken;
+
+export enum WateringLevel {
+  Never = 0,
+  Dry = 1,
+  Moist = 2,
+  Wet = 3,
+}

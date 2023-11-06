@@ -16,6 +16,7 @@ const schema = new Schema<IPlantMeasurement>(
     timestamp: {
       type: Date,
       required: true,
+      default: Date.now,
     },
     metadata: {
       type: Schema.Types.ObjectId,

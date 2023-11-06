@@ -21,6 +21,7 @@ const schema = new Schema<IDeviceMeasurement>(
     timestamp: {
       type: Date,
       required: true,
+      default: Date.now,
     },
     metadata: {
       type: Schema.Types.ObjectId,

@@ -1,4 +1,9 @@
-import { ClientType, EmbeddedDeviceToken, MobileAppToken } from "./types";
+import {
+  ClientType,
+  EmbeddedDeviceToken,
+  MobileAppToken,
+  WateringLevel,
+} from "./types";
 
 export const isNumber = (number: unknown): number is number => {
   return typeof number === "number" && !isNaN(number) && isFinite(number);
@@ -29,7 +34,7 @@ const isEmbeddedDeviceToken = (
     param !== null &&
     typeof param === "object" &&
     "type" in param &&
-    "firebaseUid" in param &&
+    "authUid" in param &&
     "hardwareId" in param &&
     param.type === "EmbeddedDeviceToken"
   );
@@ -40,7 +45,7 @@ export const parseEmbeddedDeviceToken = (
 ): EmbeddedDeviceToken => {
   if (
     !isEmbeddedDeviceToken(embeddedDeviceToken) ||
-    !isString(embeddedDeviceToken.firebaseUid) ||
+    !isString(embeddedDeviceToken.authUid) ||
     !isString(embeddedDeviceToken.hardwareId)
   ) {
     throw new Error(
@@ -58,7 +63,7 @@ const isMobileAppToken = (param: unknown): param is MobileAppToken => {
     param !== null &&
     typeof param === "object" &&
     "type" in param &&
-    "firebaseUid" in param &&
+    "authUid" in param &&
     param.type === "MobileAppToken"
   );
 };
@@ -66,10 +71,7 @@ const isMobileAppToken = (param: unknown): param is MobileAppToken => {
 export const parseMobileAppToken = (
   mobileAppToken: unknown
 ): MobileAppToken => {
-  if (
-    !isMobileAppToken(mobileAppToken) ||
-    !isString(mobileAppToken.firebaseUid)
-  ) {
+  if (!isMobileAppToken(mobileAppToken) || !isString(mobileAppToken.authUid)) {
     throw new Error(
       `Incorrect or missing token for embedded device: ${JSON.stringify(
         mobileAppToken
@@ -78,4 +80,16 @@ export const parseMobileAppToken = (
   }
 
   return mobileAppToken;
+};
+
+const isWateringLevel = (param: number): param is WateringLevel => {
+  return Object.values(WateringLevel).includes(param);
+};
+
+export const parseWateringLevel = (wateringLevel: unknown): WateringLevel => {
+  if (!isNumber(wateringLevel) || !isWateringLevel(wateringLevel)) {
+    throw new Error(`Incorrect or missing watering level: ${wateringLevel}`);
+  }
+
+  return wateringLevel;
 };

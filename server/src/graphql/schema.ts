@@ -11,6 +11,7 @@ const typeDefs = /* GraphQL */ `
     name: String!
     device: Device!
     plantIndex: Int!
+    user: User!
   }
 
   type PlantMeasurement {
@@ -28,7 +29,7 @@ const typeDefs = /* GraphQL */ `
 
   type User {
     id: ID!
-    firebaseUid: String!
+    authUid: String!
     name: String!
     devices: [Device!]!
   }
@@ -38,7 +39,8 @@ const typeDefs = /* GraphQL */ `
   }
 
   type Query {
-    allTemperatureMeasurements: String!
+    getDevices: [Device!]!
+    getPlants: [Plant!]!
   }
 
   type Mutation {
@@ -48,6 +50,7 @@ const typeDefs = /* GraphQL */ `
     ): DeviceMeasurement
     addDevice(hardwareId: String!, supportedPlants: Int!): Token
     addPlantMeasurement(hardwareId: String!, plantIndex: Int!): PlantMeasurement
+    editPlant(plant: String!, name: String, wateringLevel: Int): Plant!
   }
 `;
 

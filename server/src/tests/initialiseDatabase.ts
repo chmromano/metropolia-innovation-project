@@ -16,15 +16,15 @@ const initialiseDatabase = async () => {
   await emptyDatabase();
 
   const newUserOne = new User({
-    firebaseUid: "test_firebase_uid",
+    authUid: "test_auth_uid",
     displayName: "Luke Skywalker",
   });
   const newUserTwo = new User({
-    firebaseUid: "jjjs",
+    authUid: "jjjs",
     displayName: "Darth Vader",
   });
   const newUserThree = new User({
-    firebaseUid: "s",
+    authUid: "s",
     displayName: "Sheev Palpatine",
   });
   await newUserOne.save();
@@ -39,7 +39,12 @@ const initialiseDatabase = async () => {
   newUserOne.devices.push(newDeviceOne._id);
   await newUserOne.save();
 
-  const newPlantOne = new Plant({ name: "Monstera", device: newDeviceOne._id });
+  const newPlantOne = new Plant({
+    name: "Monstera",
+    device: newDeviceOne._id,
+    plantIndex: 1,
+    user: newUserOne._id,
+  });
   await newPlantOne.save();
 };
 

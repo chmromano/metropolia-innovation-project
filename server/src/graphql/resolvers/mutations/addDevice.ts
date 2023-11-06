@@ -7,7 +7,7 @@ import Plant from "../../../models/plant";
 import PlantMeasurement from "../../../models/plantMeasurement";
 import { IUser } from "../../../models/user";
 import { EmbeddedDeviceToken } from "../../../types/types";
-import { isNumber } from "../../../types/typeUtils";
+import { isNumber, isString } from "../../../types/typeUtils";
 import config from "../../../utils/config";
 
 interface Context {
@@ -34,8 +34,8 @@ export const addDevice = async (
   }
 
   const supportedPlants = args.supportedPlants;
-  if (!isNumber(supportedPlants)) {
-    throw new GraphQLError("invalid temperature", {
+  if (!isNumber(supportedPlants) || supportedPlants < 1) {
+    throw new GraphQLError("invalid number of supported plants", {
       extensions: {
         code: "BAD_USER_INPUT",
         invalidArgs: args.supportedPlants,
@@ -44,8 +44,19 @@ export const addDevice = async (
   }
 
   const hardwareId = args.hardwareId;
-  const existingDevice = await Device.findOne({ hardwareId });
-  if (existingDevice) {
+  if (!isString(hardwareId)) {
+    throw new GraphQLError("invalid hardware id", {
+      extensions: {
+        code: "BAD_USER_INPUT",
+        invalidArgs: args.hardwareId,
+      },
+    });
+  }
+
+  const existingDevice = await Device.findOne({ hardwareId }).populate<{
+    user: IUser;
+  }>("user");
+  if (existingDevice && existingDevice.user.authUid !== user.authUid) {
     const deletionPromises = [
       DeviceMeasurement.deleteMany({ metadata: existingDevice._id }),
       PlantMeasurement.deleteMany({ metadata: existingDevice._id }),
@@ -64,6 +75,8 @@ export const addDevice = async (
       device: newDevice._id,
       name: "",
       plantIndex: index + 1,
+      wateringLevel: 0,
+      user: user._id,
     };
   });
 
@@ -76,7 +89,7 @@ export const addDevice = async (
 
   const token: EmbeddedDeviceToken = {
     type: "EmbeddedDeviceToken",
-    firebaseUid: user.firebaseUid,
+    authUid: user.authUid,
     hardwareId,
   };
 

@@ -56,7 +56,7 @@ export const addDevice = async (
   const existingDevice = await Device.findOne({ hardwareId }).populate<{
     user: IUser;
   }>("user");
-  if (existingDevice && existingDevice.user.firebaseUid !== user.firebaseUid) {
+  if (existingDevice && existingDevice.user.authUid !== user.authUid) {
     const deletionPromises = [
       DeviceMeasurement.deleteMany({ metadata: existingDevice._id }),
       PlantMeasurement.deleteMany({ metadata: existingDevice._id }),
@@ -76,6 +76,7 @@ export const addDevice = async (
       name: "",
       plantIndex: index + 1,
       wateringLevel: 0,
+      user: user._id,
     };
   });
 
@@ -88,7 +89,7 @@ export const addDevice = async (
 
   const token: EmbeddedDeviceToken = {
     type: "EmbeddedDeviceToken",
-    firebaseUid: user.firebaseUid,
+    authUid: user.authUid,
     hardwareId,
   };
 

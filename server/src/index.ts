@@ -82,7 +82,7 @@ const start = async () => {
           );
 
           const currentUser = await User.findOne({
-            firebaseUid: decodedToken.firebaseUid,
+            authUid: decodedToken.authUid,
           }).exec();
           let currentDevice: IDevice | null = null;
 

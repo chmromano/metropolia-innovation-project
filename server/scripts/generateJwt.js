@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 const json = {
-  firebaseUid: "test_firebase_uid",
+  authUid: "test_auth_uid",
   type: "EmbeddedDeviceToken",
   hardwareId: "test_hardware_id",
 };

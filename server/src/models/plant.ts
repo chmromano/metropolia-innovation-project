@@ -9,6 +9,7 @@ export interface IPlant extends Document {
   device: Schema.Types.ObjectId;
   plantIndex: number;
   wateringLevel: WateringLevel;
+  user: Schema.Types.ObjectId;
 }
 
 const schema = new Schema<IPlant>({
@@ -30,6 +31,11 @@ const schema = new Schema<IPlant>({
     type: Number,
     required: true,
     default: 0,
+  },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
   },
 });
 

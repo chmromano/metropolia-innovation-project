@@ -3,13 +3,13 @@ import uniqueValidator from "mongoose-unique-validator";
 
 export interface IUser extends Document {
   _id: Schema.Types.ObjectId;
-  firebaseUid: string;
+  authUid: string;
   displayName: string;
   devices: Schema.Types.ObjectId[];
 }
 
 const schema = new Schema<IUser>({
-  firebaseUid: {
+  authUid: {
     type: String,
     required: true,
     unique: true,

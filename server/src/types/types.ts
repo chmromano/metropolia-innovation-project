@@ -4,7 +4,7 @@ export enum ClientType {
 }
 
 interface BaseToken {
-  firebaseUid: string;
+  authUid: string;
 }
 
 export interface MobileAppToken extends BaseToken {

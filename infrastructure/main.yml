@@ -1,5 +1,0 @@
----
-- import_tasks: for-config-mongo.yml
-- import_tasks: for-host-mongo.yml
-- import_tasks: for-container-mongo.yml
-- import_tasks: nodejs-container.yml

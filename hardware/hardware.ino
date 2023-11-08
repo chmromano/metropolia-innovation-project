@@ -60,6 +60,7 @@ void loop()
         int temperature = tempSensor.getTemperature();
         Serial.print("Temperature: ");
         Serial.println(temperature);
+
     }
     */
 

@@ -18,7 +18,7 @@ class TemperatureSensor
     int m_bValue;    // B value of thermistor, default is 4275
     int m_res;       // Value of R0. Default is 100k
 
-    int m_temperature; // Storing the temperature value
+    int m_currentTemperature; // Storing the temperature value
 };
 
 #endif

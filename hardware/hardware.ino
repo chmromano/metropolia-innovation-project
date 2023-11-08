@@ -31,11 +31,13 @@ void setup()
         ;
     }
 
+    
     // Connect to WiFi
     if (wifiController.connectToNetwork())
     {
         Serial.println("Connected to WiFi network.");
     }
+    
 
     // 12 bit ADC
     analogReadResolution(12);
@@ -47,39 +49,6 @@ void loop()
     Serial.println("Starting program.");
     delay(2000);
 
-    // webSocketController.sendMessage("hello");
-
-    /*
-    Serial.println("Starting WebSocket client");
-    client.begin();
-
-    while (client.connected())
-    {
-
-        // See if a message has been recieved
-        int messageSize = client.parseMessage();
-        if (messageSize > 0)
-        {
-            Serial.println("Recieved message: ");
-            Serial.println(client.readString());
-        }
-
-        Serial.print("Sending message: ");
-        Serial.print("This is message number: ");
-        Serial.println(messageCount);
-
-        client.beginMessage(TYPE_TEXT);
-        client.print("This is message number: ");
-        client.print(messageCount);
-        client.endMessage();
-
-        messageCount++;
-
-        // Wait 5000ms and send next message.
-        delay(5000);
-    }
-    /*
-
     /*
     pumpController.activatePump(1, 2000);
     pumpController.activatePump(2, 2000);
@@ -87,12 +56,15 @@ void loop()
     pumpController.activatePump(4, 2000);
     */
 
+
+    /*
     if (tempSensor.readTemperature())
     {
         int temperature = tempSensor.getTemperature();
         Serial.print("Temperature: ");
         Serial.println(temperature);
     }
+    */
 
     /*
     if (distSensor.readDistance()) {

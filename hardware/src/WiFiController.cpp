@@ -17,6 +17,9 @@ bool WiFiController::connectToNetwork()
 
     while (this->m_connectionStatus != WL_CONNECTED)
     {
+        Serial.print("Attempting to connect. Attempt number: ");
+        Serial.println(attemptCounter);
+
         if (attemptCounter < 5)
         {
             attemptCounter++;
@@ -30,6 +33,14 @@ bool WiFiController::connectToNetwork()
             // Wait for 10 seconds for connection
             delay(10000);
         }
+        else
+        {
+            Serial.print("After ");
+            Serial.print(attemptCounter);
+            Serial.println(" attempts, no WiFi connection was established.");
+            continue;
+        }
+
     }
 
     if (this->m_connectionStatus == WL_CONNECTED)

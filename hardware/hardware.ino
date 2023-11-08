@@ -31,13 +31,11 @@ void setup()
         ;
     }
 
-    
     // Connect to WiFi
     if (wifiController.connectToNetwork())
     {
         Serial.println("Connected to WiFi network.");
     }
-    
 
     // 12 bit ADC
     analogReadResolution(12);
@@ -55,7 +53,6 @@ void loop()
     pumpController.activatePump(3, 2000);
     pumpController.activatePump(4, 2000);
     */
-
 
     /*
     if (tempSensor.readTemperature())

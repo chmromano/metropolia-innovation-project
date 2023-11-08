@@ -30,7 +30,7 @@
   vars_files:
     - secrets.yml
   tasks:
-    - name: 'Clone GitHub repo'
+    - name: "Clone GitHub repo"
       git:
         repo: "https://{{ access_token }}@github.com/chmromano/metropolia-innovation-project.git"
         dest: /home/miggy/projects/irrigation/repo
@@ -48,13 +48,22 @@
         state: started
         command: tail -f /dev/null
 
-    - name: "Copy the server folder inside the container"
+    - name: "Copy the server repo folder inside the container"
       command: >
-        docker cp /home/miggy/projects/irrigation/repo backend-nodejs:/tmp/app-code
+        docker cp /home/miggy/projects/irrigation/repo backend-nodejs:/tmp/project-repo
 
-# need to create a new directory under /home and move to app-repo
-# the following commands need to be run at the same lvl as the server directory
-# before the following: do command - npm install
-# first comman: npm run tsc
-# second command:  npm start
-# both of the commands are run inside the container
+    - name: "Create a new directory and move code inside the container"
+      command: >
+        docker exec backend-nodejs sh -c "mkdir /home/project-repo && mv /tmp/project-repo /home/project-repo"
+
+    - name: "Run npm install inside the container"
+      command: >
+        docker exec backend-nodejs sh -c "cd /home/app-repo/server && npm install"
+
+    - name: "Run npm run tsc inside the container"
+      command: >
+        docker exec backend-nodejs sh -c "cd /home/app-repo/server && npm run tsc"
+
+    - name: "Run npm start inside the container"
+      command: >
+        docker exec backend-nodejs sh -c "cd /home/app-repo/server && npm start"

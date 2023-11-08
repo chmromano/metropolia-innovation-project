@@ -14,7 +14,6 @@ void WiFiController::printSSID()
 bool WiFiController::connectToNetwork()
 {
     int attemptCounter = 0;
-
     while (this->m_connectionStatus != WL_CONNECTED)
     {
         Serial.print("Attempting to connect. Attempt number: ");
@@ -40,7 +39,6 @@ bool WiFiController::connectToNetwork()
             Serial.println(" attempts, no WiFi connection was established.");
             continue;
         }
-
     }
 
     if (this->m_connectionStatus == WL_CONNECTED)

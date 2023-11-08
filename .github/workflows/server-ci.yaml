@@ -1,17 +1,17 @@
-name: React Native CI
+name: Server CI
 
 on:
   pull_request:
   push:
 
 jobs:
-  react-native-ci:
+  server-ci:
     runs-on:
       - ${{ (github.ref != 'refs/heads/main' && github.event_name != 'pull_request') && 'self-hosted' || 'ubuntu-latest' }}
 
     defaults:
       run:
-        working-directory: ./client
+        working-directory: ./server
 
     steps:
       - name: Checkout code
@@ -25,8 +25,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Type check project
-        run: npm run ts:check
-
       - name: Lint project
         run: npm run lint
+
+      - name: Compile project
+        run: npm run tsc

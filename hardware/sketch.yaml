@@ -7,5 +7,7 @@ profiles:
 
     libraries:
       - WiFiNINA (1.8.14)
+      - ArduinoHttpClient (0.5.0)
+      - FlashStorage (1.0.0)
 
 default_profile: arduino-mkr-wifi-1010

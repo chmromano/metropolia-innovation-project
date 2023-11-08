@@ -28,11 +28,11 @@
   hosts: localhost
   gather_facts: false
   tasks:
-    # - name: 'Clone GitHub repo'
-    #   git:
-    #     repo: #repo-url
-    #     dest: /home/miggy/projects/irrigation
-    #   become: true
+    - name: 'Clone GitHub repo'
+      git:
+        repo: #repo-url
+        dest: /home/miggy/projects/irrigation/repo
+      become: true
 
     - name: "Pull nodeJS image"
       docker_image:

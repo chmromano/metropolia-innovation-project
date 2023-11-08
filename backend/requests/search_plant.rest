@@ -1,5 +1,0 @@
-GET http://localhost:3005/api/plants/search?q=aloe_vera HTTP/1.1
-
-###
-
-GET http://localhost:3005/api/plants/728 HTTP/1.1

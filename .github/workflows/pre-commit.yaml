@@ -6,7 +6,8 @@ on:
 
 jobs:
   pre-commit:
-    runs-on: self-hosted
+    runs-on:
+      - ${{ (github.ref != 'refs/heads/main' && github.event_name != 'pull_request') && 'self-hosted' || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout the repository

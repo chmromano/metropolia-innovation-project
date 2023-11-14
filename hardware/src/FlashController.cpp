@@ -1,7 +1,7 @@
 #include "FlashController.h"
 
-
-typedef struct {
+typedef struct
+{
     bool valid;
     char wifi_ssid[32];
     char wifi_password[32];
@@ -14,7 +14,6 @@ FlashStorage(deviceCredentialsStorage, DeviceCredentials);
 
 FlashController::FlashController()
 {
-
 }
 
 bool FlashController::writeToFlash()
@@ -47,7 +46,8 @@ bool FlashController::readFromFlash()
     deviceCredentials = deviceCredentialsStorage.read();
 
     // If there is nothing to be read, "valid" should be "false".
-    if (deviceCredentials.valid == false) {
+    if (deviceCredentials.valid == false)
+    {
         return false;
     }
     else
@@ -60,14 +60,18 @@ bool FlashController::readFromFlash()
 
         String token = deviceCredentials.id_token;
         token.toCharArray(this->m_TOKEN, 64);
-        
+
         return true;
     }
 }
 
 bool FlashController::clearFlash()
 {
-    return false;
+    // Overwrite the existing Device Credentials saved in
+    // "deviceCredentialsStorage" with an empty DeviceCredentials
+    FlashStorage(deviceCredentialsStorage, DeviceCredentials);
+
+    return true;
 }
 
 void FlashController::setSSID(String ssid)

@@ -1,4 +1,5 @@
 
+#include "src/BLEController.h"
 #include "src/FlashController.h"
 #include "src/WebSocketController.h"
 #include "src/WiFiController.h"
@@ -11,6 +12,7 @@
 WiFiController wifiController;
 WebSocketController webSocketController;
 FlashController flashController;
+BLEController bleController;
 
 DistanceSensor distSensor(0);
 TemperatureSensor tempSensor(6);
@@ -50,6 +52,9 @@ void setup()
         // 3. Recieve WiFi SSID and password from Mobile App via BLE
         //
         // NOTE! Token max length 64 char, WiFi SSID and password max length 32 char.
+
+        bleController.advertiseServiceWithCharacteristics("Plantuino");
+        bleController.pairWithMobileApp();
 
         String myToken = "ABCD-EFGH-IJKL-1234-5678-9010";
         String wifiSSID = "MyWiFiSSID";

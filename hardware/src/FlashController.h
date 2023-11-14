@@ -4,14 +4,15 @@
 #include <Arduino.h>
 #include <FlashStorage.h>
 
-class FlashController {
-public:
+class FlashController
+{
+  public:
     FlashController();
-    
+
     bool writeToFlash();
     bool readFromFlash();
     bool clearFlash();
-    
+
     void setSSID(String ssid);
     String getSSID();
 
@@ -20,8 +21,8 @@ public:
 
     void setTOKEN(String token);
     String getTOKEN();
-    
-private:
+
+  private:
     char m_wifiSSID[32];
     char m_wifiPASSWORD[32];
     char m_TOKEN[64];

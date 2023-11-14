@@ -68,7 +68,7 @@ bool FlashController::readFromFlash()
 bool FlashController::clearFlash()
 {
     // Overwrite the existing Device Credentials saved in
-    // "deviceCredentialsStorage" with an empty DeviceCredentials
+    // "deviceCredentialsStorage" with an empty DeviceCredentials.
     FlashStorage(deviceCredentialsStorage, DeviceCredentials);
 
     return true;

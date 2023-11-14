@@ -12,7 +12,6 @@ class WiFiController
   public:
     WiFiController();
     void printSSID();
-
     bool connectToNetwork();
 
   private:

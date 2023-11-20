@@ -10,8 +10,7 @@ class BLEController
   public:
     BLEController();
 
-    void advertiseServiceWithCharacteristics(const char *bleName);
-    void pairWithMobileApp();
+    void advertiseServiceAndPair(const char *bleName);
 
     String getUniqueID();
     String getReceivedToken();
@@ -23,12 +22,6 @@ class BLEController
     String m_receivedToken;
     String m_receivedWiFiSSID;
     String m_receivedWiFiPassword;
-
-    BLEService m_deviceSetupService;
-    BLECharacteristic m_tokenCharacteristic;
-    BLECharacteristic m_uniqueIdCharacteristic;
-    BLECharacteristic m_ssidCharacteristic;
-    BLECharacteristic m_passwordCharacteristic;
 
     void generateUniqueID();
 };

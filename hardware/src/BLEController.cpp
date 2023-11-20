@@ -5,22 +5,14 @@ BLEController::BLEController()
     this->generateUniqueID();
 }
 
-void BLEController::advertiseServiceWithCharacteristics(const char *bleName)
+void BLEController::advertiseServiceAndPair(const char *bleName)
 {
-    // BLEService deviceSetupService("EB2269B7-F5E0-4A5E-B480-765CCB24649D");
-    // BLECharacteristic uniqueIdCharacteristic("9DEC44C4-C21F-4D8F-9CC9-26E21C6F136B", BLERead, 48);
-    // BLECharacteristic tokenCharacteristic("49A5280A-FF31-42D2-A56A-EF1940EB5C7D", BLERead | BLEWrite, 96);
-    // BLECharacteristic ssidCharacteristic("54CF0E15-424B-4DB3-8B8D-AC2F2A4E4E13", BLERead | BLEWrite, 96);
-    // BLECharacteristic passwordCharacteristic("F1DB5367-EBFD-447C-A85C-2135AFD18A27", BLERead | BLEWrite, 96);
-
-    this->m_deviceSetupService = BLEService("EB2269B7-F5E0-4A5E-B480-765CCB24649D");
-    this->m_uniqueIdCharacteristic = BLEStringCharacteristic("9DEC44C4-C21F-4D8F-9CC9-26E21C6F136B", BLERead, 48);
-    this->m_tokenCharacteristic =
-        BLEStringCharacteristic("49A5280A-FF31-42D2-A56A-EF1940EB5C7D", BLERead | BLEWrite, 96);
-    this->m_ssidCharacteristic =
-        BLEStringCharacteristic("54CF0E15-424B-4DB3-8B8D-AC2F2A4E4E13", BLERead | BLEWrite, 96);
-    this->m_passwordCharacteristic =
-        BLEStringCharacteristic("F1DB5367-EBFD-447C-A85C-2135AFD18A27", BLERead | BLEWrite, 96);
+    BLEService deviceSetupService("EB2269B7-F5E0-4A5E-B480-765CCB24649D");
+    BLEStringCharacteristic supportedPlantsCharacteristic("B12AB6EA-1785-4F08-B194-0B0AA343605C", BLERead, 48);
+    BLEStringCharacteristic uniqueIdCharacteristic("9DEC44C4-C21F-4D8F-9CC9-26E21C6F136B", BLERead, 48);
+    BLEStringCharacteristic tokenCharacteristic("49A5280A-FF31-42D2-A56A-EF1940EB5C7D", BLERead | BLEWrite, 96);
+    BLEStringCharacteristic ssidCharacteristic("54CF0E15-424B-4DB3-8B8D-AC2F2A4E4E13", BLERead | BLEWrite, 96);
+    BLEStringCharacteristic passwordCharacteristic("F1DB5367-EBFD-447C-A85C-2135AFD18A27", BLERead | BLEWrite, 96);
 
     // Initialize ArduinoBLE Library
     if (!BLE.begin())
@@ -30,73 +22,75 @@ void BLEController::advertiseServiceWithCharacteristics(const char *bleName)
     }
 
     BLE.setLocalName(bleName);
-    BLE.setAdvertisedService(this->m_deviceSetupService);
+    BLE.setAdvertisedService(deviceSetupService);
 
-    this->m_deviceSetupService.addCharacteristic(this->m_uniqueIdCharacteristic);
-    this->m_deviceSetupService.addCharacteristic(this->m_tokenCharacteristic);
-    this->m_deviceSetupService.addCharacteristic(this->m_ssidCharacteristic);
-    this->m_deviceSetupService.addCharacteristic(this->m_passwordCharacteristic);
+    deviceSetupService.addCharacteristic(uniqueIdCharacteristic);
+    deviceSetupService.addCharacteristic(tokenCharacteristic);
+    deviceSetupService.addCharacteristic(supportedPlantsCharacteristic);
+    deviceSetupService.addCharacteristic(ssidCharacteristic);
+    deviceSetupService.addCharacteristic(passwordCharacteristic);
+    BLE.addService(deviceSetupService);
 
-    this->m_uniqueIdCharacteristic.writeValue(this->m_uniqueID.c_str());
+    String uniqueID = this->getUniqueID();
+    char unID[32];
+    uniqueID.toCharArray(unID, 32);
+
+    uniqueIdCharacteristic.writeValue(unID);
+    supportedPlantsCharacteristic.writeValue("4");
 
     BLE.advertise();
-}
 
-void BLEController::pairWithMobileApp()
-{
-    BLEDevice central = BLE.central();
+    Serial.println("Advertising service, waiting for connection..");
 
-    if (central)
+    while (true)
     {
-        while (central.connected())
+        BLEDevice central = BLE.central();
+        if (central)
         {
-            // First wait for token
-            while (true)
-            {
-                if (this->m_tokenCharacteristic.written())
-                {
-                    // Token received
-                    const unsigned char *rec = this->m_tokenCharacteristic.value();
-                    String receivedToken(reinterpret_cast<const char *>(rec));
-                    Serial.print("Received token: ");
-                    Serial.println(receivedToken);
+            Serial.println("Connected to central.");
+            digitalWrite(LED_BUILTIN, HIGH);
 
-                    this->m_receivedToken = receivedToken;
-                    break;
-                }
-            }
-            // Then wait for SSID
-            while (true)
+            while (central.connected())
             {
-                if (this->m_ssidCharacteristic.written())
-                {
-                    // SSID received
-                    const unsigned char *rec = this->m_ssidCharacteristic.value();
-                    String receivedSSID(reinterpret_cast<const char *>(rec));
-                    Serial.print("Received SSID: ");
-                    Serial.println(receivedSSID);
+                Serial.println("Bluetooth connection active.");
+                delay(4000);
 
-                    this->m_receivedWiFiSSID = receivedSSID;
-                    break;
-                }
-            }
-            // Then wait for password
-            while (true)
-            {
-                if (this->m_passwordCharacteristic.written())
+                if (tokenCharacteristic.written())
                 {
-                    // Password received
-                    const unsigned char *rec = this->m_passwordCharacteristic.value();
-                    String receivedPassword(reinterpret_cast<const char *>(rec));
-                    Serial.print("Received password: ");
-                    Serial.println(receivedPassword);
+                    Serial.println("token received!");
+                    String rec = tokenCharacteristic.value();
+                    Serial.print("Received: ");
+                    Serial.println(rec);
 
-                    this->m_receivedWiFiPassword = receivedPassword;
-                    break;
+                    this->m_receivedToken = rec;
                 }
+
+                if (ssidCharacteristic.written())
+                {
+                    Serial.println("ssid received!");
+                    String rec = ssidCharacteristic.value();
+                    Serial.print("Received: ");
+                    Serial.println(rec);
+
+                    this->m_receivedWiFiSSID = rec;
+                }
+
+                if (passwordCharacteristic.written())
+                {
+                    Serial.println("password received!");
+                    String rec = ssidCharacteristic.value();
+                    Serial.print("Received: ");
+                    Serial.println(rec);
+
+                    this->m_receivedWiFiPassword = rec;
+                }
+
+                // Breaking away from loop needs to be implemented,
+                // break away when all three characteristics have been read.
             }
-            // Everything received
-            break;
+
+            Serial.println("Disconnected from central.");
+            digitalWrite(LED_BUILTIN, LOW);
         }
     }
 }

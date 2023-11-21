@@ -6,13 +6,6 @@ DistanceSensor::DistanceSensor(int digitalPin) : m_ultraSonic(digitalPin)
     this->m_digitalPin = digitalPin;
 }
 
-void DistanceSensor::whoAmI()
-{
-    Serial.print("whoAmI? - Digital pin: ");
-    Serial.print(this->m_digitalPin);
-    Serial.println();
-}
-
 bool DistanceSensor::readDistance()
 {
     long RangeInCentimeters = this->m_ultraSonic.MeasureInCentimeters();

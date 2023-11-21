@@ -14,13 +14,13 @@ class FlashController
     bool clearFlash();
 
     void setSSID(String ssid);
-    String getSSID();
+    char *getSSID();
 
     void setPASSWORD(String password);
-    String getPASSWORD();
+    char *getPASSWORD();
 
     void setTOKEN(String token);
-    String getTOKEN();
+    char *getTOKEN();
 
   private:
     char m_wifiSSID[32];

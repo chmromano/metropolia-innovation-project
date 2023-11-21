@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#include "wifi_secrets.h"
+// #include "wifi_secrets.h"
 #include <ArduinoHttpClient.h>
 #include <WiFiNINA.h>
 
@@ -11,12 +11,9 @@ class WiFiController
 {
   public:
     WiFiController();
-    void printSSID();
-    bool connectToNetwork();
+    bool connectToNetwork(char *ssid, char *pass);
 
   private:
-    char *m_ssid;
-    char *m_pass;
     int m_connectionStatus = WL_IDLE_STATUS;
 };
 

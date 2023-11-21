@@ -40,57 +40,45 @@ void BLEController::advertiseServiceAndPair(const char *bleName)
 
     BLE.advertise();
 
-    Serial.println("Advertising service, waiting for connection..");
-
     while (true)
     {
         BLEDevice central = BLE.central();
         if (central)
         {
-            Serial.println("Connected to central.");
-            digitalWrite(LED_BUILTIN, HIGH);
-
             while (central.connected())
             {
-                Serial.println("Bluetooth connection active.");
-                delay(4000);
+                bool tokenReceived = false;
+                bool ssidReceived = false;
+                bool passwordReceived = false;
 
                 if (tokenCharacteristic.written())
                 {
-                    Serial.println("token received!");
                     String rec = tokenCharacteristic.value();
-                    Serial.print("Received: ");
-                    Serial.println(rec);
-
                     this->m_receivedToken = rec;
+                    tokenReceived = true;
                 }
 
                 if (ssidCharacteristic.written())
                 {
-                    Serial.println("ssid received!");
                     String rec = ssidCharacteristic.value();
-                    Serial.print("Received: ");
-                    Serial.println(rec);
-
                     this->m_receivedWiFiSSID = rec;
+                    ssidReceived = true;
                 }
 
                 if (passwordCharacteristic.written())
                 {
-                    Serial.println("password received!");
                     String rec = ssidCharacteristic.value();
-                    Serial.print("Received: ");
-                    Serial.println(rec);
-
                     this->m_receivedWiFiPassword = rec;
+                    passwordReceived = true;
                 }
 
-                // Breaking away from loop needs to be implemented,
-                // break away when all three characteristics have been read.
+                // Everything received, return from function
+                if (tokenReceived && ssidReceived && passwordReceived)
+                {
+                    BLE.stopAdvertise();
+                    return;
+                }
             }
-
-            Serial.println("Disconnected from central.");
-            digitalWrite(LED_BUILTIN, LOW);
         }
     }
 }

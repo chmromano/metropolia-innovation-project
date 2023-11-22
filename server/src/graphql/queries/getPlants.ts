@@ -1,7 +1,7 @@
 import { GraphQLError } from "graphql";
 
-import Plant from "../../../models/plant";
-import { IUser } from "../../../models/user";
+import Plant from "../../models/plant";
+import { IUser } from "../../models/user";
 
 interface Context {
   currentUser: IUser;

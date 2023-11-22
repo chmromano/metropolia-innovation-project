@@ -1,7 +1,7 @@
 import { GraphQLError } from "graphql";
 
-import Device from "../../../models/device";
-import { IUser } from "../../../models/user";
+import Device from "../../models/device";
+import { IUser } from "../../models/user";
 
 interface Context {
   currentUser: IUser;

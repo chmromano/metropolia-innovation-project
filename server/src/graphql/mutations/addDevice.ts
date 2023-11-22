@@ -1,14 +1,14 @@
 import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 
-import Device from "../../../models/device";
-import DeviceMeasurement from "../../../models/deviceMeasurement";
-import Plant from "../../../models/plant";
-import PlantMeasurement from "../../../models/plantMeasurement";
-import { IUser } from "../../../models/user";
-import { EmbeddedDeviceToken } from "../../../types/types";
-import { isNumber, isString } from "../../../types/typeUtils";
-import config from "../../../utils/config";
+import Device from "../../models/device";
+import DeviceMeasurement from "../../models/deviceMeasurement";
+import Plant from "../../models/plant";
+import PlantMeasurement from "../../models/plantMeasurement";
+import { IUser } from "../../models/user";
+import { EmbeddedDeviceToken } from "../../types/types";
+import { isNumber, isString } from "../../types/typeUtils";
+import config from "../../utils/config";
 
 interface Context {
   currentUser: IUser;

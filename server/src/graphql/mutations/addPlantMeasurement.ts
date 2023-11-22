@@ -1,8 +1,8 @@
 import { GraphQLError } from "graphql";
 
-import { IDevice } from "../../../models/device";
-import PlantMeasurement from "../../../models/plantMeasurement";
-import { isNumber } from "../../../types/typeUtils";
+import { IDevice } from "../../models/device";
+import PlantMeasurement from "../../models/plantMeasurement";
+import { isNumber } from "../../types/typeUtils";
 
 interface Context {
   currentDevice: IDevice;

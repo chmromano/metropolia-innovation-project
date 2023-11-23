@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/index.ts",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "tsc": "tsc",
     "dev": "NODE_ENV=development tsx watch --env-file=.env ./src/index.ts",
-    "start": "NODE_ENV=production --env-file=.env ./build/index.js",
+    "start": "NODE_ENV=production node --env-file=.env ./build/index.js",
     "lint": "eslint ./src/**/*.ts",
     "lint:fix": "npm run lint -- --fix",
     "test": "NODE_ENV=test vitest",
@@ -44,7 +44,7 @@
     "eslint-plugin-prettier": "^5.0.1",
     "prettier": "^3.0.3",
     "supertest": "^6.3.3",
-    "tsx": "^3.14.0",
+    "tsx": "^4.2.0",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   },

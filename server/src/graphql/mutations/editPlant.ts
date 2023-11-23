@@ -1,10 +1,10 @@
 import { GraphQLError } from "graphql";
 import { Schema } from "mongoose";
 
-import Plant from "../../../models/plant";
-import { IUser } from "../../../models/user";
-import { WateringLevel } from "../../../types/types";
-import { isString, parseWateringLevel } from "../../../types/typeUtils";
+import Plant from "../../models/plant";
+import { IUser } from "../../models/user";
+import { WateringLevel } from "../../types/types";
+import { isString, parseWateringLevel } from "../../types/typeUtils";
 
 interface Context {
   currentUser: IUser;

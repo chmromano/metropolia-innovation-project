@@ -50,7 +50,6 @@ void setup()
     // Connect to WiFi
 
     if (wifiController.connectToNetwork(flashController.getSSID(), flashController.getPASSWORD()))
-        ;
     {
         Serial.println("Connected to WiFi network.");
     }

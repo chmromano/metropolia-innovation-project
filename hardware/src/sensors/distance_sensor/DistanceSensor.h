@@ -10,8 +10,6 @@ class DistanceSensor
   public:
     DistanceSensor(int digitalPin);
 
-    void whoAmI();
-
     bool readDistance();
     long getDistance();
 

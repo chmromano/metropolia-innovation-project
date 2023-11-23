@@ -79,7 +79,7 @@ void FlashController::setSSID(String ssid)
     ssid.toCharArray(this->m_wifiSSID, 32);
 }
 
-String FlashController::getSSID()
+char *FlashController::getSSID()
 {
     return this->m_wifiSSID;
 }
@@ -89,7 +89,7 @@ void FlashController::setPASSWORD(String password)
     password.toCharArray(this->m_wifiPASSWORD, 32);
 }
 
-String FlashController::getPASSWORD()
+char *FlashController::getPASSWORD()
 {
     return this->m_wifiPASSWORD;
 }
@@ -99,7 +99,7 @@ void FlashController::setTOKEN(String token)
     token.toCharArray(this->m_TOKEN, 64);
 }
 
-String FlashController::getTOKEN()
+char *FlashController::getTOKEN()
 {
     return this->m_TOKEN;
 }

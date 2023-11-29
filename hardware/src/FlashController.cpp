@@ -16,7 +16,7 @@ FlashController::FlashController()
 {
 }
 
-bool FlashController::writeToFlash()
+bool FlashController::writeCredentialsToFlash()
 {
     DeviceCredentials deviceCredentials;
 
@@ -38,7 +38,7 @@ bool FlashController::writeToFlash()
     return true;
 }
 
-bool FlashController::readFromFlash()
+bool FlashController::readCredentialsFromFlash()
 {
     DeviceCredentials deviceCredentials;
 

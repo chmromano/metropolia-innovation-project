@@ -9,8 +9,9 @@ class FlashController
   public:
     FlashController();
 
-    bool writeToFlash();
-    bool readFromFlash();
+    bool writeCredentialsToFlash();
+    bool readCredentialsFromFlash();
+
     bool clearFlash();
 
     void setSSID(String ssid);

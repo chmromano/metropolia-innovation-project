@@ -11,7 +11,7 @@
 
 /* Declaration and instantiation of common objects */
 WiFiController wifiController;
-WebSocketController webSocketController;
+// WebSocketController webSocketController;
 FlashController flashController;
 // BLEController bleController;
 
@@ -20,6 +20,8 @@ DistanceSensor distSensor(0);
 TemperatureSensor tempSensor(6);
 MoistureSensor moistSensor(5);
 Relay pumpController(1, 2, 3, 4);
+
+WiFiClient wifi;
 
 void setup()
 {
@@ -31,7 +33,8 @@ void setup()
         ;
     }
 
-    if (!flashController.readFromFlash())
+    /*
+    if (!flashController.readCredentialsFromFlash())
     {
         // Read was not successful, data needs to be acquired via BLE
 
@@ -44,7 +47,7 @@ void setup()
         flashController.setTOKEN(bleController.getReceivedToken());
         flashController.setSSID(bleController.getReceivedWiFiSSID());
         flashController.setPASSWORD(bleController.getReceivedWiFiPassword());
-        flashController.writeToFlash();
+        flashController.writeCredentialsToFlash();
     }
 
     // Connect to WiFi
@@ -53,6 +56,7 @@ void setup()
     {
         Serial.println("Connected to WiFi network.");
     }
+    */
 }
 
 void loop()
@@ -62,11 +66,48 @@ void loop()
     delay(2000);
 
     /*
+    char serverAddress[] = "192.168.22.47";
+    int port = 3000;
+
+    WebSocketController webSocketController = WebSocketController(wifi, serverAddress, port);
+    webSocketController.openConnectionWithToken("ws://192.168.22.47?token=this_is_a_token");
+
+    while (webSocketController.isConnected())
+    {
+
+      // Check if a message has been received
+      int messageSize = webSocketController.parseMessage();
+      if (messageSize > 0)
+      {
+        String receivedMessage = webSocketController.readString();
+        if (receivedMessage.indexOf("set_watering_t") != -1)
+        {
+          // Received message starts with 'set_watering_t'
+          int valueIndex = receivedMessage.indexOf("val=") + 4;
+          int indexIndex = receivedMessage.indexOf("index=") + 6;
+          int wateringThreshold = (receivedMessage.substring(valueIndex, receivedMessage.indexOf("index=") -
+    1)).toInt(); int plantIndex = (receivedMessage.substring(indexIndex)).toInt();
+
+
+        }
+        else if (receivedMessage.indexOf("activate_pump") != -1)
+        {
+          // Received message starts with 'activate_pump'
+          int indexIndex = receivedMessage.indexOf("index=") + 6;
+          int plantIndex = receivedMessage.substring(indexIndex).toInt();
+        }
+        else
+        {
+          Serial.println("Received message not recognized.");
+        }
+      }
+    }
+    */
+
     pumpController.activatePump(1, 2000);
     pumpController.activatePump(2, 2000);
     pumpController.activatePump(3, 2000);
     pumpController.activatePump(4, 2000);
-    */
 
     /*
     if (tempSensor.readTemperature())

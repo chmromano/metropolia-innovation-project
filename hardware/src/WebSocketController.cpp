@@ -1,55 +1,44 @@
 #include "WebSocketController.h"
 
-WebSocketController::WebSocketController(char *serverAddress, int port)
+WebSocketController::WebSocketController(WiFiClient &wifi, char serverAddress[], int port)
+    : m_client(wifi, serverAddress, port)
 {
     this->m_webSocketPort = port;
-    this->m_webSocketServerAddress = serverAddress;
+    strcpy(this->m_serverAddress, serverAddress);
 }
 
-void WebSocketController::sendMessage(char *msg)
+void WebSocketController::openConnectionWithToken(const char *path)
 {
-    WiFiClient wifi;
-    WebSocketClient client = WebSocketClient(wifi, "echo.websocket.events", 80);
-    int messageCount = 0;
+    this->m_client.begin(path);
+}
 
-    Serial.println("Starting WebSocket client");
-    client.begin();
+bool WebSocketController::isConnected()
+{
+    return this->m_client.connected();
+}
 
-    while (client.connected())
+void WebSocketController::sendTempTank(float temp, int tanklvl)
+{
+    char jsonData[256];
+    sprintf(jsonData, R"(
     {
-        int x = client.ping();
-        Serial.print("Ping x: ");
-        Serial.println(x);
-
-        delay(1000);
-
-        client.beginMessage(TYPE_TEXT);
-        client.print("This is a message.");
-        client.endMessage();
-
-        int y = client.ping();
-        Serial.print("Ping y: ");
-        Serial.println(y);
-
-        delay(1000);
-
-        // parseMessage results in breaking away from the loop. the "Ping z: " gets printed, but instead of delay(1000)
-        // and restart the loop, we break away.
-        int messageSize = client.parseMessage();
-
-        int z = client.ping();
-        Serial.print("Ping z: ");
-        Serial.println(z);
-
-        delay(1000);
+      "query": "mutation AddDeviceMeasurement($temperature: Float!, $tankLevel: Float!) { addDeviceMeasurement(temperature: $temperature, tankLevel: $tankLevel) { timestamp temperature tankLevel metadata { hardwareId } } }",
+      "variables": { "temperature": %f, "tankLevel": %d }
     }
+    )",
+            temp, tanklvl);
+
+    this->m_client.beginMessage(TYPE_TEXT);
+    this->m_client.print(jsonData);
+    this->m_client.endMessage();
 }
 
-void WebSocketController::whoAmI()
+int WebSocketController::parseMessage()
 {
-    Serial.print("Server address: ");
-    Serial.println(this->m_webSocketServerAddress);
+    return this->m_client.parseMessage();
+}
 
-    Serial.print("Port: ");
-    Serial.println(this->m_webSocketPort);
+String WebSocketController::readString()
+{
+    return this->m_client.readString();
 }

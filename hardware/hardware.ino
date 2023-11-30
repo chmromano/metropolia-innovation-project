@@ -10,8 +10,8 @@
 #include "src/sensors/moisture_sensor/MoistureSensor.h"
 #include "src/sensors/temperature_sensor/TemperatureSensor.h"
 
-// char *serverAddress = "192.168.0.101";
-char *serverAddress = "ws://plantuino.mrornito.net";
+char *serverAddress = "192.168.0.138"; // WebSocket connection works if this is IP address. Does NOT work with
+                                       // plantuino.mrornito.net. Does NOT work with https://plantuino.mrornito.net
 int port = 3000;
 WiFiClient wifi;
 
@@ -77,7 +77,7 @@ void loop()
     char *token = flashController.getTOKEN();
     char *ws = "ws://";
 
-    String path = String(serverAddress) + String("?token=") + String(token);
+    String path = String(ws) + String("plantuino.mrornito.net") + String("?token=") + String(token);
     Serial.println(path);
     webSocketController.openConnectionWithToken(path.c_str());
 
@@ -130,6 +130,8 @@ void loop()
             // Some way of translating the distance measurement into a need of watering needs to be implemented.
             // e.g. if distance > x --> tank level is low
             webSocketController.sendDeviceMeasurement(23.3, 15);
+
+            lastActionTime = currentTime;
         }
 
         // Check if a message has been received

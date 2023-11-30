@@ -5,7 +5,7 @@ typedef struct
     bool valid;
     char wifi_ssid[32];
     char wifi_password[32];
-    char id_token[64];
+    char id_token[256];
 } DeviceCredentials;
 
 // Reserve a portion of flash memory to store a 'DeviceCredentials'.
@@ -59,7 +59,7 @@ bool FlashController::readCredentialsFromFlash()
         password.toCharArray(this->m_wifiPASSWORD, 32);
 
         String token = deviceCredentials.id_token;
-        token.toCharArray(this->m_TOKEN, 64);
+        token.toCharArray(this->m_TOKEN, 256);
 
         return true;
     }
@@ -96,7 +96,7 @@ char *FlashController::getPASSWORD()
 
 void FlashController::setTOKEN(String token)
 {
-    token.toCharArray(this->m_TOKEN, 64);
+    token.toCharArray(this->m_TOKEN, 256);
 }
 
 char *FlashController::getTOKEN()

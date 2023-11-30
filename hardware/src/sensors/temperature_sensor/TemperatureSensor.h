@@ -11,14 +11,14 @@ class TemperatureSensor
     void whoAmI();
 
     bool readTemperature();
-    int getTemperature();
+    float getTemperature();
 
   private:
     int m_analogPin; // The analog pin that the sensor is connected to
     int m_bValue;    // B value of thermistor, default is 4275
     int m_res;       // Value of R0. Default is 100k
 
-    int m_currentTemperature; // Storing the temperature value
+    float m_currentTemperature; // Storing the temperature value
 };
 
 #endif

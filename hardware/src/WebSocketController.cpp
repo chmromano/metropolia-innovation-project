@@ -17,25 +17,39 @@ bool WebSocketController::isConnected()
     return this->m_client.connected();
 }
 
-void WebSocketController::sendTempTank(float temp, int tanklvl)
+// Unnecessary?
+void WebSocketController::sendMsg(const char *msg)
 {
-    char jsonData[256];
-    sprintf(jsonData, R"(
-    {
-      "query": "mutation AddDeviceMeasurement($temperature: Float!, $tankLevel: Float!) { addDeviceMeasurement(temperature: $temperature, tankLevel: $tankLevel) { timestamp temperature tankLevel metadata { hardwareId } } }",
-      "variables": { "temperature": %f, "tankLevel": %d }
-    }
-    )",
-            temp, tanklvl);
+    this->m_client.beginMessage(TYPE_TEXT);
+    this->m_client.print(msg);
+    this->m_client.endMessage();
+}
+
+void WebSocketController::sendDeviceMeasurement(float temp, int tanklvl)
+{
+    char msg[128];
+    sprintf(msg, "{\"data\":\"device\",\"temperature\":%.1f,\"tankLevel\":%d}", temp, tanklvl);
 
     this->m_client.beginMessage(TYPE_TEXT);
-    this->m_client.print(jsonData);
+    this->m_client.print(msg);
+    this->m_client.endMessage();
+}
+
+void WebSocketController::sendPlantInfo(float moisture, int index)
+{
+    char msg[128];
+    sprintf(msg, "{\"data\":\"plant\",\"soilMoisture\":%.1f,\"plantIndex\":%d}", moisture, index);
+    // sprintf(msg, "plant;%.1f;%d", moisture, index);
+
+    this->m_client.beginMessage(TYPE_TEXT);
+    this->m_client.print(msg);
     this->m_client.endMessage();
 }
 
 int WebSocketController::parseMessage()
 {
-    return this->m_client.parseMessage();
+    int size = this->m_client.parseMessage();
+    return size;
 }
 
 String WebSocketController::readString()

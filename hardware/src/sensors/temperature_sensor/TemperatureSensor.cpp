@@ -37,7 +37,7 @@ bool TemperatureSensor::readTemperature()
     return false;
 }
 
-int TemperatureSensor::getTemperature()
+float TemperatureSensor::getTemperature()
 {
     return this->m_currentTemperature;
 }

@@ -15,7 +15,9 @@ class WebSocketController
     int parseMessage();
     String readString();
 
-    void sendTempTank(float temp, int tanklvl);
+    void sendMsg(const char *msg);
+    void sendDeviceMeasurement(float temp, int tanklvl);
+    void sendPlantInfo(float moisture, int index);
 
   private:
     WebSocketClient m_client;

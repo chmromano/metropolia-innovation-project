@@ -26,7 +26,7 @@ class FlashController
   private:
     char m_wifiSSID[32];
     char m_wifiPASSWORD[32];
-    char m_TOKEN[64];
+    char m_TOKEN[256];
 };
 
 #endif

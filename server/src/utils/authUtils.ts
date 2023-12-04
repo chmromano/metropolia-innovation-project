@@ -3,70 +3,35 @@ import http from "http";
 import jwt from "jsonwebtoken";
 
 import config from "./config";
-import { ClientType, Token } from "../types/types";
-import {
-  isString,
-  parseClientType,
-  parseEmbeddedDeviceToken,
-  parseMobileAppToken,
-} from "../types/typeUtils";
+import { Token } from "../types/types";
+import { parseToken } from "../types/typeUtils";
 
-const getAuthTokenFromHeader = (headers: http.IncomingHttpHeaders): string => {
+const getAuthTokenFromHeader = (headers: http.IncomingHttpHeaders) => {
   const auth = headers.authorization;
 
   if (auth && auth.startsWith("Bearer ")) {
     return auth.substring(7);
   }
 
-  throw new Error("Missing or invalid authorization header");
+  return null;
 };
 
-const getClientTypeFromHeader = (
-  headers: http.IncomingHttpHeaders
-): ClientType => {
-  const clientTypeHeader = headers["x-client-type"];
-
-  return parseClientType(clientTypeHeader);
-};
-
-const getSecretKeyBasedOnClientType = (clientType: ClientType): string => {
-  if (
-    clientType === ClientType.EmbeddedDevice &&
-    isString(config.EMBEDDED_DEVICE_JWT_SECRET)
-  ) {
-    return config.EMBEDDED_DEVICE_JWT_SECRET;
-  }
-
-  if (
-    clientType === ClientType.MobileApp &&
-    isString(config.MOBILE_APP_JWT_SECRET)
-  ) {
-    return config.MOBILE_APP_JWT_SECRET;
-  }
-
-  throw new Error("Missing or invalid JWT secret");
-};
-
-const decodeTokenBasedOnClientType = (
-  token: string,
-  clientType: ClientType
-): Token => {
-  const secretKey = getSecretKeyBasedOnClientType(clientType);
+const decodeHardwareToken = (token: string): Token => {
+  const secretKey = config.EMBEDDED_DEVICE_JWT_SECRET;
   const decodedToken = jwt.verify(token, secretKey);
 
-  if (clientType === ClientType.MobileApp) {
-    return parseMobileAppToken(decodedToken);
-  }
+  return parseToken(decodedToken);
+};
 
-  if (clientType === ClientType.EmbeddedDevice) {
-    return parseEmbeddedDeviceToken(decodedToken);
-  }
+const decodeMobileAppToken = (token: string): Token => {
+  const secretKey = config.MOBILE_APP_JWT_SECRET;
+  const decodedToken = jwt.verify(token, secretKey);
 
-  throw new Error("Unable to decode token");
+  return parseToken(decodedToken);
 };
 
 export default {
   getAuthTokenFromHeader,
-  getClientTypeFromHeader,
-  decodeTokenBasedOnClientType,
+  decodeHardwareToken,
+  decodeMobileAppToken,
 };

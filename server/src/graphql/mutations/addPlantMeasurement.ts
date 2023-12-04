@@ -1,6 +1,7 @@
 import { GraphQLError } from "graphql";
 
 import { IDevice } from "../../models/device";
+import Plant from "../../models/plant";
 import PlantMeasurement from "../../models/plantMeasurement";
 import { isNumber } from "../../types/typeUtils";
 
@@ -18,8 +19,7 @@ export const addPlantMeasurement = async (
   args: Args,
   context: Context
 ) => {
-  const device = context.currentDevice;
-  if (!device) {
+  if (!context.currentDevice) {
     throw new GraphQLError("not authenticated", {
       extensions: {
         code: "BAD_USER_INPUT",
@@ -27,8 +27,7 @@ export const addPlantMeasurement = async (
     });
   }
 
-  const soilMoisture = args.soilMoisture;
-  if (!isNumber(soilMoisture)) {
+  if (!isNumber(args.soilMoisture)) {
     throw new GraphQLError("invalid soil moisture", {
       extensions: {
         code: "BAD_USER_INPUT",
@@ -37,10 +36,27 @@ export const addPlantMeasurement = async (
     });
   }
 
+  if (!isNumber(args.plantIndex)) {
+    throw new GraphQLError("invalid soil moisture", {
+      extensions: {
+        code: "BAD_USER_INPUT",
+        invalidArgs: args.plantIndex,
+      },
+    });
+  }
+
+  const plant = await Plant.findOne({
+    device: context.currentDevice._id,
+    plantIndex: args.plantIndex,
+  });
+  if (!plant) {
+    throw new GraphQLError("Could not find selected plant");
+  }
+
   const plantMeasurement = new PlantMeasurement({
-    soilMoisture,
+    soilMoisture: args.soilMoisture,
     timestamp: new Date(),
-    metadata: device._id,
+    metadata: plant._id,
   });
 
   await plantMeasurement.save();
@@ -48,6 +64,6 @@ export const addPlantMeasurement = async (
   return {
     soilMoisture: plantMeasurement.soilMoisture,
     timestamp: plantMeasurement.timestamp,
-    metadata: { hardwareId: device._id },
+    metadata: { id: plant._id },
   };
 };

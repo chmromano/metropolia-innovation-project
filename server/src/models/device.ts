@@ -6,9 +6,15 @@ export interface IDevice extends Document {
   hardwareId: string;
   user: Schema.Types.ObjectId;
   plants: Schema.Types.ObjectId[];
+  name: string;
 }
 
 const schema = new Schema<IDevice>({
+  name: {
+    type: String,
+    required: true,
+    default: "Plantuino",
+  },
   hardwareId: {
     type: String,
     required: true,

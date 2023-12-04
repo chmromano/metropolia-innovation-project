@@ -48,6 +48,9 @@
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   },
+  "optionalDependencies": {
+    "win-node-env": "^0.6.1"
+  },
   "jest": {
     "testEnvironment": "node",
     "globalTeardown": "./src/tests/teardown.ts"

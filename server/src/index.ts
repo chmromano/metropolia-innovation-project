@@ -109,7 +109,7 @@ const start = async () => {
   app.use(middleware.errorHandler);
 
   httpServer.listen(config.PORT, config.HOST, () =>
-    logger.info(`Server is now running on http://localhost:${config.PORT}`)
+    logger.info(`Server is now running on http://${config.HOST}:${config.PORT}`)
   );
 };
 

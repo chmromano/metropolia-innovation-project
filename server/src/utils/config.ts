@@ -5,7 +5,7 @@ if (!isNumber(PORT)) {
   throw new Error("Port configuration is invalid or not defined.");
 }
 
-const HOST = process.env.HOST || "localhost"; // Default to localhost if not set
+const HOST = process.env.HOST || "127.0.0.1"; // Default to localhost if not set
 
 const NODE_ENV = process.env.NODE_ENV || "development"; // Default to development if not set
 

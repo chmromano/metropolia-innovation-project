@@ -3,8 +3,7 @@ import { Schema } from "mongoose";
 
 import Plant from "../../models/plant";
 import { IUser } from "../../models/user";
-import { WateringLevel } from "../../types/types";
-import { isString, parseWateringLevel } from "../../types/typeUtils";
+import { isNumber, isString } from "../../types/typeUtils";
 
 interface Context {
   currentUser: IUser;
@@ -12,7 +11,7 @@ interface Context {
 
 interface Args {
   name?: string;
-  wateringLevel?: WateringLevel;
+  wateringLevel?: number;
   plant: Schema.Types.ObjectId;
 }
 
@@ -20,20 +19,22 @@ const validateArgs = (
   args: Args
 ): {
   name?: string;
-  wateringLevel?: WateringLevel;
+  wateringLevel?: number;
 } => {
-  const updates: { name?: string; wateringLevel?: WateringLevel } = {};
+  const updates: { name?: string; wateringLevel?: number } = {};
 
   if (args.name) {
     if (!isString(args.name) || args.name.trim() === "") {
-      throw new Error("Name must be a non-empty string.");
+      throw new GraphQLError("Name must be a non-empty string.");
     }
     updates.name = args.name;
   }
 
-  if (args.wateringLevel) {
-    updates.wateringLevel = parseWateringLevel(args.wateringLevel);
+  if (!isNumber(args.wateringLevel)) {
+    throw new GraphQLError("Watering level must be a number.");
   }
+
+  updates.wateringLevel = args.wateringLevel;
 
   if (Object.keys(updates).length === 0) {
     throw new Error("At least one valid field must be provided for updating.");

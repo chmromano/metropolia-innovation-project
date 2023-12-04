@@ -1,9 +1,18 @@
 import jwt from "jsonwebtoken";
 
-const json = {
-  authUid: "test_auth_uid",
+const hardware = {
+  authUid: "unique_user_id_0",
   type: "EmbeddedDeviceToken",
-  hardwareId: "test_hardware_id",
+  hardwareId: "unique_hardware_id_0",
 };
 
-console.log(jwt.sign(json, "embedded_device_jwt_secret"));
+const client = {
+  authUid: "unique_user_id_0",
+  type: "MobileAppToken",
+};
+
+console.log(
+  "HARDWARE TOKEN:",
+  jwt.sign(hardware, "embedded_device_jwt_secret")
+);
+console.log("CLIENT TOKEN:", jwt.sign(client, "mobile_app_jwt_secret"));

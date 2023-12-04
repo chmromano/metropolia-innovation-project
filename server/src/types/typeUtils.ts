@@ -1,9 +1,13 @@
+import { WebSocket } from "ws";
+
 import {
-  ClientType,
+  CustomSocket,
   EmbeddedDeviceToken,
   MobileAppToken,
-  WateringLevel,
+  Token,
 } from "./types";
+import { IDevice } from "../models/device";
+import { IUser } from "../models/user";
 
 export const isNumber = (number: unknown): number is number => {
   return typeof number === "number" && !isNaN(number) && isFinite(number);
@@ -13,18 +17,12 @@ export const isString = (text: unknown): text is string => {
   return typeof text === "string";
 };
 
-const isClientType = (param: string): param is ClientType => {
-  return Object.values(ClientType)
-    .map((v) => v.toString())
-    .includes(param);
-};
-
-export const parseClientType = (clientType: unknown): ClientType => {
-  if (!isString(clientType) || !isClientType(clientType)) {
-    throw new Error(`Incorrect or missing client type: ${clientType}`);
+export const parseString = (string: unknown): string => {
+  if (!isString(string)) {
+    throw new Error(`Could not parse string: ${string}`);
   }
 
-  return clientType;
+  return string;
 };
 
 const isEmbeddedDeviceToken = (
@@ -40,7 +38,7 @@ const isEmbeddedDeviceToken = (
   );
 };
 
-export const parseEmbeddedDeviceToken = (
+const parseEmbeddedDeviceToken = (
   embeddedDeviceToken: unknown
 ): EmbeddedDeviceToken => {
   if (
@@ -68,9 +66,7 @@ const isMobileAppToken = (param: unknown): param is MobileAppToken => {
   );
 };
 
-export const parseMobileAppToken = (
-  mobileAppToken: unknown
-): MobileAppToken => {
+const parseMobileAppToken = (mobileAppToken: unknown): MobileAppToken => {
   if (!isMobileAppToken(mobileAppToken) || !isString(mobileAppToken.authUid)) {
     throw new Error(
       `Incorrect or missing token for embedded device: ${JSON.stringify(
@@ -82,14 +78,46 @@ export const parseMobileAppToken = (
   return mobileAppToken;
 };
 
-const isWateringLevel = (param: number): param is WateringLevel => {
-  return Object.values(WateringLevel).includes(param);
-};
-
-export const parseWateringLevel = (wateringLevel: unknown): WateringLevel => {
-  if (!isNumber(wateringLevel) || !isWateringLevel(wateringLevel)) {
-    throw new Error(`Incorrect or missing watering level: ${wateringLevel}`);
+export const parseToken = (token: unknown): Token => {
+  if (isEmbeddedDeviceToken(token)) {
+    return parseEmbeddedDeviceToken(token);
   }
 
-  return wateringLevel;
+  if (isMobileAppToken(token)) {
+    return parseMobileAppToken(token);
+  }
+
+  throw new Error(`Could not parse token: ${JSON.stringify(token)}`);
+};
+
+const isCustomSocket = (param: WebSocket): param is CustomSocket => {
+  return (
+    param !== null &&
+    typeof param === "object" &&
+    "currentUser" in param &&
+    typeof param.currentUser === "object" &&
+    "currentDevice" in param &&
+    typeof param.currentDevice === "object"
+  );
+};
+
+export const parseCustomSocket = (socket: WebSocket): CustomSocket => {
+  if (isCustomSocket(socket)) {
+    return socket;
+  }
+
+  throw new Error(`Could not parse custom socket: ${JSON.stringify(socket)}`);
+};
+
+export const toCustomSocket = (
+  socket: WebSocket,
+  user: IUser,
+  device: IDevice
+): CustomSocket => {
+  const customSocket = socket as CustomSocket;
+
+  customSocket.currentUser = user;
+  customSocket.currentDevice = device;
+
+  return customSocket;
 };

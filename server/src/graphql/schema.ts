@@ -4,6 +4,7 @@ const typeDefs = /* GraphQL */ `
     hardwareId: String!
     user: User!
     plants: [Plant!]!
+    name: String!
   }
 
   type Plant {
@@ -49,8 +50,11 @@ const typeDefs = /* GraphQL */ `
       tankLevel: Float!
     ): DeviceMeasurement
     addDevice(hardwareId: String!, supportedPlants: Int!): Token
-    addPlantMeasurement(hardwareId: String!, plantIndex: Int!): PlantMeasurement
+    generateHardwareToken(hardwareId: String!): Token
+    addPlantMeasurement(soilMoisture: Int!, plantIndex: Int!): PlantMeasurement
+    addUser(userId: String!): Token
     editPlant(plant: String!, name: String, wateringLevel: Int): Plant!
+    waterPlant(hardwareId: String!, plantIndex: Int!): Boolean!
   }
 `;
 

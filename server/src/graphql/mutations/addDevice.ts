@@ -24,8 +24,7 @@ export const addDevice = async (
   args: Args,
   context: Context
 ) => {
-  const user = context.currentUser;
-  if (!user) {
+  if (!context.currentUser) {
     throw new GraphQLError("not authenticated", {
       extensions: {
         code: "BAD_USER_INPUT",
@@ -33,8 +32,7 @@ export const addDevice = async (
     });
   }
 
-  const supportedPlants = args.supportedPlants;
-  if (!isNumber(supportedPlants) || supportedPlants < 1) {
+  if (!isNumber(args.supportedPlants) || args.supportedPlants < 1) {
     throw new GraphQLError("invalid number of supported plants", {
       extensions: {
         code: "BAD_USER_INPUT",
@@ -43,9 +41,8 @@ export const addDevice = async (
     });
   }
 
-  const hardwareId = args.hardwareId;
-  if (!isString(hardwareId)) {
-    throw new GraphQLError("invalid hardware id", {
+  if (!isString(args.hardwareId)) {
+    throw new GraphQLError("Invalid hardware id", {
       extensions: {
         code: "BAD_USER_INPUT",
         invalidArgs: args.hardwareId,
@@ -53,44 +50,58 @@ export const addDevice = async (
     });
   }
 
-  const existingDevice = await Device.findOne({ hardwareId }).populate<{
+  const existingDevice = await Device.findOne({
+    hardwareId: args.hardwareId,
+  }).populate<{
     user: IUser;
   }>("user");
-  if (existingDevice && existingDevice.user.authUid !== user.authUid) {
+  if (
+    existingDevice &&
+    existingDevice.user.authUid !== context.currentUser.authUid
+  ) {
     const deletionPromises = [
       DeviceMeasurement.deleteMany({ metadata: existingDevice._id }),
       PlantMeasurement.deleteMany({ metadata: existingDevice._id }),
       Plant.deleteMany({ _id: { $in: existingDevice.plants } }),
-      Device.deleteOne({ hardwareId }),
+      Device.deleteOne({ hardwareId: args.hardwareId }),
     ];
 
     await Promise.all(deletionPromises);
   }
 
-  const newDevice = new Device({ user: user._id, hardwareId });
-  await newDevice.save();
+  if (!existingDevice) {
+    const newDevice = new Device({
+      user: context.currentUser._id,
+      hardwareId: args.hardwareId,
+      name: "Plantuino",
+    });
+    await newDevice.save();
 
-  const plantsToAdd = Array.from({ length: supportedPlants }, (_, index) => {
-    return {
-      device: newDevice._id,
-      name: "",
-      plantIndex: index + 1,
-      wateringLevel: 0,
-      user: user._id,
-    };
-  });
+    const plantsToAdd = Array.from(
+      { length: args.supportedPlants },
+      (_, index) => {
+        return {
+          device: newDevice._id,
+          name: "Plant",
+          plantIndex: index + 1,
+          wateringLevel: 0,
+          user: context.currentUser._id,
+        };
+      }
+    );
 
-  const insertedPlants = await Plant.insertMany(plantsToAdd);
+    const insertedPlants = await Plant.insertMany(plantsToAdd);
 
-  for (const plant of insertedPlants) {
-    newDevice.plants.push(plant._id);
+    for (const plant of insertedPlants) {
+      newDevice.plants.push(plant._id);
+    }
+    await newDevice.save();
   }
-  await newDevice.save();
 
   const token: EmbeddedDeviceToken = {
     type: "EmbeddedDeviceToken",
-    authUid: user.authUid,
-    hardwareId,
+    authUid: context.currentUser.authUid,
+    hardwareId: args.hardwareId,
   };
 
   return { value: jwt.sign(token, config.EMBEDDED_DEVICE_JWT_SECRET) };

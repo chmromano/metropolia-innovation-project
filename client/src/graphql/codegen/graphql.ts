@@ -48,11 +48,12 @@ export type DeviceMeasurement = {
 
 export type Mutation = {
   __typename?: "Mutation";
-  addDevice?: Maybe<Token>;
+  addDevice?: Maybe<Device>;
   addDeviceMeasurement?: Maybe<DeviceMeasurement>;
   addPlantMeasurement?: Maybe<PlantMeasurement>;
   addUser?: Maybe<Token>;
   editPlant: Plant;
+  generateHardwareToken?: Maybe<Token>;
   waterPlant: Scalars["Boolean"]["output"];
 };
 
@@ -76,9 +77,13 @@ export type MutationAddUserArgs = {
 };
 
 export type MutationEditPlantArgs = {
-  name?: InputMaybe<Scalars["String"]["input"]>;
-  plant: Scalars["String"]["input"];
+  plantId: Scalars["String"]["input"];
+  plantName?: InputMaybe<Scalars["String"]["input"]>;
   wateringLevel?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+export type MutationGenerateHardwareTokenArgs = {
+  hardwareId: Scalars["String"]["input"];
 };
 
 export type MutationWaterPlantArgs = {
@@ -93,6 +98,7 @@ export type Plant = {
   name: Scalars["String"]["output"];
   plantIndex: Scalars["Int"]["output"];
   user: User;
+  wateringLevel: Scalars["Int"]["output"];
 };
 
 export type PlantMeasurement = {
@@ -128,7 +134,16 @@ export type AddDeviceMutationVariables = Exact<{
 
 export type AddDeviceMutation = {
   __typename?: "Mutation";
-  addDevice?: { __typename?: "Token"; value: string } | null;
+  addDevice?: { __typename?: "Device"; id: string } | null;
+};
+
+export type GenerateHardwareTokenMutationVariables = Exact<{
+  hardwareId: Scalars["String"]["input"];
+}>;
+
+export type GenerateHardwareTokenMutation = {
+  __typename?: "Mutation";
+  generateHardwareToken?: { __typename?: "Token"; value: string } | null;
 };
 
 export type AddUserMutationVariables = Exact<{
@@ -230,7 +245,7 @@ export const AddDeviceDocument = {
             selectionSet: {
               kind: "SelectionSet",
               selections: [
-                { kind: "Field", name: { kind: "Name", value: "value" } },
+                { kind: "Field", name: { kind: "Name", value: "id" } },
               ],
             },
           },
@@ -239,6 +254,60 @@ export const AddDeviceDocument = {
     },
   ],
 } as unknown as DocumentNode<AddDeviceMutation, AddDeviceMutationVariables>;
+export const GenerateHardwareTokenDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "generateHardwareToken" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "hardwareId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "generateHardwareToken" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "hardwareId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "hardwareId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "value" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GenerateHardwareTokenMutation,
+  GenerateHardwareTokenMutationVariables
+>;
 export const AddUserDocument = {
   kind: "Document",
   definitions: [

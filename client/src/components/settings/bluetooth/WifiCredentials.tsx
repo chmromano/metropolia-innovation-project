@@ -12,7 +12,10 @@ import {
 } from "react-native";
 
 import { useBluetoothContext } from "./BluetoothContext";
-import { ADD_DEVICE } from "../../../graphql/mutations";
+import {
+  ADD_DEVICE,
+  GENERATE_HARDWARE_TOKEN,
+} from "../../../graphql/mutations";
 import { GET_DEVICES, GET_PLANTS } from "../../../graphql/queries";
 import { stringToInt } from "../../../types/typeUtils";
 import { SettingsRootNativeStackParamList } from "../SettingsStackNavigator";
@@ -30,6 +33,7 @@ const WifiCredentials = ({ route, navigation }: WifiCredentialsProps) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const [generateHardwareToken] = useMutation(GENERATE_HARDWARE_TOKEN);
   const [addDevice] = useMutation(ADD_DEVICE, {
     refetchQueries: [{ query: GET_DEVICES }, { query: GET_PLANTS }],
   });
@@ -39,6 +43,42 @@ const WifiCredentials = ({ route, navigation }: WifiCredentialsProps) => {
   const [ssid, setSsid] = useState("");
   const [password, setPassword] = useState("");
 
+  const generateHardwareTokenHelper = async (hardwareId: string) => {
+    const result = await generateHardwareToken({
+      variables: {
+        hardwareId,
+      },
+    });
+
+    if (!result.data || !result.data.generateHardwareToken) {
+      throw new Error("Failed to retrieve token");
+    }
+
+    const token = result.data.generateHardwareToken;
+
+    return token;
+  };
+
+  const addDeviceHelper = async (
+    hardwareId: string,
+    supportedPlants: string
+  ) => {
+    const result = await addDevice({
+      variables: {
+        hardwareId,
+        supportedPlants: stringToInt(supportedPlants),
+      },
+    });
+
+    if (!result.data || !result.data.addDevice) {
+      throw new Error("Failed to add device");
+    }
+
+    const device = result.data.addDevice;
+
+    return device;
+  };
+
   const handlePress = async () => {
     try {
       setIsLoading(true);
@@ -46,7 +86,6 @@ const WifiCredentials = ({ route, navigation }: WifiCredentialsProps) => {
 
       const device = await bluetooth.connectAndStopScan(deviceId);
 
-      console.log(ssid, password);
       const writeWifiCredentialsPromises = bluetooth.writeWifiCredentials(
         device,
         ssid,
@@ -55,25 +94,13 @@ const WifiCredentials = ({ route, navigation }: WifiCredentialsProps) => {
 
       const [hardwareId, supportedPlants] =
         await bluetooth.readHardwareDetails(device);
-      console.log(hardwareId, supportedPlants);
-      const result = await addDevice({
-        variables: {
-          hardwareId,
-          supportedPlants: stringToInt(supportedPlants),
-        },
-      });
 
-      if (!result.data || !result.data.addDevice) {
-        throw new Error("Failed to retrieve token");
-      }
-
-      const token = result.data.addDevice;
-
-      console.log(token);
+      const token = await generateHardwareTokenHelper(hardwareId);
 
       await Promise.all([
         ...writeWifiCredentialsPromises,
         bluetooth.writeToken(device, token),
+        addDeviceHelper(hardwareId, supportedPlants),
       ]);
 
       Alert.alert("Connection Successful", "Device connected successfully.", [

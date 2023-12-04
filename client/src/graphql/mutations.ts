@@ -3,6 +3,14 @@ import { gql } from "./codegen";
 export const ADD_DEVICE = gql(/* GraphQL */ `
   mutation addDevice($hardwareId: String!, $supportedPlants: Int!) {
     addDevice(hardwareId: $hardwareId, supportedPlants: $supportedPlants) {
+      id
+    }
+  }
+`);
+
+export const GENERATE_HARDWARE_TOKEN = gql(/* GraphQL */ `
+  mutation generateHardwareToken($hardwareId: String!) {
+    generateHardwareToken(hardwareId: $hardwareId) {
       value
     }
   }

@@ -13,8 +13,10 @@ import { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-  "\n  mutation addDevice($hardwareId: String!, $supportedPlants: Int!) {\n    addDevice(hardwareId: $hardwareId, supportedPlants: $supportedPlants) {\n      value\n    }\n  }\n":
+  "\n  mutation addDevice($hardwareId: String!, $supportedPlants: Int!) {\n    addDevice(hardwareId: $hardwareId, supportedPlants: $supportedPlants) {\n      id\n    }\n  }\n":
     types.AddDeviceDocument,
+  "\n  mutation generateHardwareToken($hardwareId: String!) {\n    generateHardwareToken(hardwareId: $hardwareId) {\n      value\n    }\n  }\n":
+    types.GenerateHardwareTokenDocument,
   "\n  mutation addUser($userId: String!) {\n    addUser(userId: $userId) {\n      value\n    }\n  }\n":
     types.AddUserDocument,
   "\n  mutation waterPlant($hardwareId: String!, $plantIndex: Int!) {\n    waterPlant(hardwareId: $hardwareId, plantIndex: $plantIndex)\n  }\n":
@@ -43,8 +45,14 @@ export function gql(source: string): unknown;
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  mutation addDevice($hardwareId: String!, $supportedPlants: Int!) {\n    addDevice(hardwareId: $hardwareId, supportedPlants: $supportedPlants) {\n      value\n    }\n  }\n"
-): (typeof documents)["\n  mutation addDevice($hardwareId: String!, $supportedPlants: Int!) {\n    addDevice(hardwareId: $hardwareId, supportedPlants: $supportedPlants) {\n      value\n    }\n  }\n"];
+  source: "\n  mutation addDevice($hardwareId: String!, $supportedPlants: Int!) {\n    addDevice(hardwareId: $hardwareId, supportedPlants: $supportedPlants) {\n      id\n    }\n  }\n"
+): (typeof documents)["\n  mutation addDevice($hardwareId: String!, $supportedPlants: Int!) {\n    addDevice(hardwareId: $hardwareId, supportedPlants: $supportedPlants) {\n      id\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  mutation generateHardwareToken($hardwareId: String!) {\n    generateHardwareToken(hardwareId: $hardwareId) {\n      value\n    }\n  }\n"
+): (typeof documents)["\n  mutation generateHardwareToken($hardwareId: String!) {\n    generateHardwareToken(hardwareId: $hardwareId) {\n      value\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

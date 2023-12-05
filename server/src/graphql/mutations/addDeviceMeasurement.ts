@@ -1,16 +1,18 @@
-import { GraphQLError } from "graphql";
-
 import { IDevice } from "../../models/device";
 import DeviceMeasurement from "../../models/deviceMeasurement";
-import { isNumber } from "../../types/typeUtils";
+import {
+  validateDeviceAuthentication,
+  validateTankLevel,
+  validateTemperature,
+} from "../utils/validationUtils";
 
 interface Context {
   currentDevice: IDevice;
 }
 
 interface Args {
-  temperature: number;
-  tankLevel: number;
+  temperature: unknown;
+  tankLevel: unknown;
 }
 
 export const addDeviceMeasurement = async (
@@ -18,34 +20,9 @@ export const addDeviceMeasurement = async (
   args: Args,
   context: Context
 ) => {
-  const device = context.currentDevice;
-  if (!device) {
-    throw new GraphQLError("not authenticated", {
-      extensions: {
-        code: "BAD_USER_INPUT",
-      },
-    });
-  }
-
-  const temperature = args.temperature;
-  if (!isNumber(temperature)) {
-    throw new GraphQLError("invalid temperature", {
-      extensions: {
-        code: "BAD_USER_INPUT",
-        invalidArgs: args.temperature,
-      },
-    });
-  }
-
-  const tankLevel = args.tankLevel;
-  if (!isNumber(tankLevel)) {
-    throw new GraphQLError("invalid tank level", {
-      extensions: {
-        code: "BAD_USER_INPUT",
-        invalidArgs: args.tankLevel,
-      },
-    });
-  }
+  const device = validateDeviceAuthentication(context.currentDevice);
+  const temperature = validateTemperature(args.temperature);
+  const tankLevel = validateTankLevel(args.tankLevel);
 
   const deviceMeasurement = new DeviceMeasurement({
     temperature,

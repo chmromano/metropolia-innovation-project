@@ -13,6 +13,7 @@ const typeDefs = /* GraphQL */ `
     device: Device!
     plantIndex: Int!
     user: User!
+    wateringLevel: Int!
   }
 
   type PlantMeasurement {
@@ -49,11 +50,11 @@ const typeDefs = /* GraphQL */ `
       temperature: Float!
       tankLevel: Float!
     ): DeviceMeasurement
-    addDevice(hardwareId: String!, supportedPlants: Int!): Token
+    addDevice(hardwareId: String!, supportedPlants: Int!): Device
     generateHardwareToken(hardwareId: String!): Token
     addPlantMeasurement(soilMoisture: Int!, plantIndex: Int!): PlantMeasurement
     addUser(userId: String!): Token
-    editPlant(plant: String!, name: String, wateringLevel: Int): Plant!
+    editPlant(plantId: String!, plantName: String, wateringLevel: Int): Plant!
     waterPlant(hardwareId: String!, plantIndex: Int!): Boolean!
   }
 `;

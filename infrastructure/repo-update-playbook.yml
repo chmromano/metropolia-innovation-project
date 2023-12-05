@@ -1,0 +1,23 @@
+---
+- name: "Update and Deploy NodeJS App"
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - secrets.yml
+
+  tasks:
+    - name: "Git Pull the Latest Changes"
+      git:
+        repo: "https://{{ access_token }}@github.com/chmromano/metropolia-innovation-project.git"
+        dest: /home/miggy/docker-station/projects/irrigation/repo
+        update: yes
+        version: create_bt_demo
+
+    - name: "Copy Updated Code to NodeJS Container"
+      command: >
+        docker cp /home/miggy/docker-station/projects/irrigation/repo/. backend-nodejs:/home/project-repo/
+
+    - name: "Restart NodeJS Container"
+      docker_container:
+        name: backend-nodejs
+        state: restarted

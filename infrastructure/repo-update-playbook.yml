@@ -18,6 +18,13 @@
         docker cp /home/miggy/docker-station/projects/irrigation/repo/. backend-nodejs:/home/project-repo/
 
     - name: "Restart NodeJS Container"
-      docker_container:
+      community.docker.docker_container:
         name: backend-nodejs
-        state: restarted
+        state: started
+        restart: yes
+        comparisons:
+          "*": ignore
+
+    - name: "Run npm start inside the container"
+      command: >
+        docker exec backend-nodejs sh -c "cd /home/project-repo/server && nohup npm run dev &"

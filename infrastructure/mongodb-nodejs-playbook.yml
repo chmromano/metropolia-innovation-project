@@ -83,4 +83,4 @@
 
     - name: "Run npm start inside the container"
       command: >
-        docker exec backend-nodejs sh -c "cd /home/project-repo/server && pm2 start npm --name dev -- run start"
+        docker exec backend-nodejs sh -c "cd /home/project-repo/server && nohup npm run dev &"

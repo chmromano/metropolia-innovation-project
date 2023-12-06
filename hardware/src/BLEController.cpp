@@ -53,7 +53,7 @@ void BLEController::advertiseServiceAndPair(const char *bleName)
 
             while (central.connected())
             {
-                delay(3000);
+                // delay(1000);
 
                 if (tokenCharacteristic.written())
                 {

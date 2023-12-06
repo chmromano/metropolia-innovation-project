@@ -28,22 +28,29 @@ void WebSocketController::sendMsg(const char *msg)
 void WebSocketController::sendDeviceMeasurement(float temp, int tanklvl)
 {
     char msg[128];
-    sprintf(msg, "{\"data\":\"device\",\"temperature\":%.1f,\"tankLevel\":%d}", temp, tanklvl);
+    sprintf(msg, "{\"type\":\"AddDeviceDataOperation\", \"temperature\":%.1f,\"tankLevel\":%d}", temp, tanklvl);
 
     this->m_client.beginMessage(TYPE_TEXT);
     this->m_client.print(msg);
     this->m_client.endMessage();
+
+    Serial.print("Sent: ");
+    Serial.println(msg);
+    Serial.println("endMessage");
 }
 
 void WebSocketController::sendPlantInfo(float moisture, int index)
 {
     char msg[128];
-    sprintf(msg, "{\"data\":\"plant\",\"soilMoisture\":%.1f,\"plantIndex\":%d}", moisture, index);
-    // sprintf(msg, "plant;%.1f;%d", moisture, index);
+    sprintf(msg, "{\"type\":\"AddPlantDataOperation\", \"soilMoisture\":%.1f,\"plantIndex\":%d}", moisture, index);
 
     this->m_client.beginMessage(TYPE_TEXT);
     this->m_client.print(msg);
     this->m_client.endMessage();
+
+    Serial.print("Sent: ");
+    Serial.println(msg);
+    Serial.println("endMessage");
 }
 
 int WebSocketController::parseMessage()

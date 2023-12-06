@@ -8,8 +8,6 @@ class TemperatureSensor
   public:
     TemperatureSensor(int analogPin, int bValue = 4275, int res = 100000);
 
-    void whoAmI();
-
     bool readTemperature();
     float getTemperature();
 

@@ -3,8 +3,8 @@
 
 #include <Arduino.h>
 
-const int WET_THRESHOLD = 1200;
-const int DRY_THRESHOLD = 3050;
+const int WET_THRESHOLD = 275;
+const int DRY_THRESHOLD = 780;
 
 class MoistureSensor
 {

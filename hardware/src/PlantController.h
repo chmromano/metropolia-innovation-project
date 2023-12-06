@@ -17,8 +17,8 @@ class PlantController
   public:
     PlantController();
 
-    void enableWatering(int index);
-    void disableWatering(int index);
+    // void enableWatering(int index);
+    // void disableWatering(int index);
     void setThreshold(int index, int threshold);
 
     void waterWhenNeeded(int moistures[4]);

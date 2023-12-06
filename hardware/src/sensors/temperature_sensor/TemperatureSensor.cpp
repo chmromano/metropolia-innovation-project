@@ -8,26 +8,28 @@ TemperatureSensor::TemperatureSensor(int analogPin, int bValue, int res)
     this->m_res = res;
 }
 
-void TemperatureSensor::whoAmI()
-{
-    Serial.print("whoAmI? - Analog Pin: ");
-    Serial.print(this->m_analogPin);
-    Serial.print(", B-value: ");
-    Serial.print(this->m_bValue);
-    Serial.print(", Resistor value: ");
-    Serial.print(this->m_res);
-    Serial.println();
-}
-
 bool TemperatureSensor::readTemperature()
 {
+    analogReadResolution(12);
     int a = analogRead(this->m_analogPin);
+    analogReadResolution(10);
 
     if (a)
     {
-        float R = 4095.0 / a - 1.0;
-        R = this->m_res * R;
-        float temperature = 1.0 / (log(R / this->m_res) / this->m_bValue + 1 / 298.15) - 273.15;
+        Serial.print("Analog value for temperature: ");
+        Serial.println(a);
+
+        const float R0 = this->m_res;
+        const float B = this->m_bValue;
+        const float R = R0 * (4095.0 / a - 1.0);
+        const float inv_T = 1.0 / (1 / 298.15 + 1 / B * log(R / R0));
+        float temperature = inv_T - 273.15 - 3;
+        // R = this->m_res * R;
+        // float temperature = 1.0 / (log(R / this->m_res) / this->m_bValue + 1 / 298.15) - 273.15;
+
+        Serial.print("Actual value for temperature: ");
+        Serial.println(temperature);
+
         this->m_currentTemperature = temperature;
 
         return true;

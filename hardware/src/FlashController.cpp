@@ -5,12 +5,24 @@ typedef struct
     bool valid;
     char wifi_ssid[32];
     char wifi_password[32];
-    char id_token[256];
+    char id_token[1024];
 } DeviceCredentials;
+
+// For plantlist. Not tested.
+typedef struct
+{
+    bool valid;
+    PlantInfo *plantList;
+} WateringInfo;
 
 // Reserve a portion of flash memory to store a 'DeviceCredentials'.
 // Call it 'deviceCredentialsStorage'
 FlashStorage(deviceCredentialsStorage, DeviceCredentials);
+
+// Reserve a portion of flash memory to store a 'WateringInfo'.
+// Call it 'wateringInfoStorage'
+// For plantlist. Not tested.
+FlashStorage(wateringInfoStorage, WateringInfo);
 
 FlashController::FlashController()
 {
@@ -26,7 +38,7 @@ bool FlashController::writeCredentialsToFlash()
 
     wifiPASSWORD.toCharArray(deviceCredentials.wifi_password, 32);
     wifiSSID.toCharArray(deviceCredentials.wifi_ssid, 32);
-    token.toCharArray(deviceCredentials.id_token, 64);
+    token.toCharArray(deviceCredentials.id_token, 1024);
     deviceCredentials.valid = true;
 
     Serial.println("Accessing Flash. Write.");
@@ -59,7 +71,41 @@ bool FlashController::readCredentialsFromFlash()
         password.toCharArray(this->m_wifiPASSWORD, 32);
 
         String token = deviceCredentials.id_token;
-        token.toCharArray(this->m_TOKEN, 256);
+        token.toCharArray(this->m_TOKEN, 1024);
+
+        return true;
+    }
+}
+
+// Not tested.
+bool FlashController::writePlantListToFlash()
+{
+    WateringInfo wateringInfo;
+
+    wateringInfo.valid = true;
+    wateringInfo.plantList = this->m_plantList;
+
+    Serial.println("Accessing flash. Writing PlantList.");
+    wateringInfoStorage.write(wateringInfo);
+}
+
+// Not tested.
+bool FlashController::readPlantListFromFlash()
+{
+    WateringInfo wateringInfo;
+
+    Serial.println("Accessing flash. Reading PlantList");
+    wateringInfo = wateringInfoStorage.read();
+
+    if (wateringInfo.valid == false)
+    {
+        // List was invalid, e.g. nothing has been written to it
+        return false;
+    }
+    else
+    {
+        PlantInfo *plantList = wateringInfo.plantList;
+        this->m_plantList = plantList;
 
         return true;
     }
@@ -70,6 +116,11 @@ bool FlashController::clearFlash()
     // Overwrite the existing Device Credentials saved in
     // "deviceCredentialsStorage" with an empty DeviceCredentials.
     FlashStorage(deviceCredentialsStorage, DeviceCredentials);
+
+    // Overwrite the existing Watering Info saved in
+    // "wateringInfoStorage" with an empty WateringInfo.
+    // Not tested.
+    FlashStorage(wateringInfoStorage, WateringInfo);
 
     return true;
 }
@@ -96,10 +147,22 @@ char *FlashController::getPASSWORD()
 
 void FlashController::setTOKEN(String token)
 {
-    token.toCharArray(this->m_TOKEN, 256);
+    token.toCharArray(this->m_TOKEN, 1024);
 }
 
 char *FlashController::getTOKEN()
 {
     return this->m_TOKEN;
+}
+
+// For plantlist. Not tested.
+void FlashController::setPlantList(PlantInfo *plantList)
+{
+    this->m_plantList = plantList;
+}
+
+// For plantlist. Not tested.
+PlantInfo *FlashController::getPlantList()
+{
+    return this->m_plantList;
 }

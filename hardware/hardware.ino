@@ -10,8 +10,9 @@
 #include "src/sensors/moisture_sensor/MoistureSensor.h"
 #include "src/sensors/temperature_sensor/TemperatureSensor.h"
 
-char *serverAddress = "192.168.0.138"; // WebSocket connection works if this is IP address. Does NOT work with
-                                       // plantuino.mrornito.net. Does NOT work with https://plantuino.mrornito.net
+char *serverAddress = "192.168.0.101";
+// char *serverAddress = "192.168.0.138"; // WebSocket connection works if this is IP address. Does NOT work with
+//  plantuino.mrornito.net. Does NOT work with https://plantuino.mrornito.net
 int port = 3000;
 WiFiClient wifi;
 
@@ -23,49 +24,58 @@ WebSocketController webSocketController = WebSocketController(wifi, serverAddres
 PlantController plantController;
 
 /* Declaration and instantiation of sensors and actuators */
-DistanceSensor distSensor(0);    // digital D0
-TemperatureSensor tempSensor(6); // analog A6
-MoistureSensor moistSensor2(2);  // analog A2-5
-MoistureSensor moistSensor3(3);  // analog A2-5
-MoistureSensor moistSensor4(4);  // analog A2-5
-MoistureSensor moistSensor5(5);  // analog A2-5
-// Relay pumpController(1, 2, 3, 4);  // digital D1-4
+DistanceSensor distSensor(0);     // digital D0
+TemperatureSensor tempSensor(A5); // analog A5
+
+// MoistureSensor moistSensor1(A1);  // analog A1-4
+MoistureSensor moistSensor2(A2); // analog A1-4
+MoistureSensor moistSensor3(A3); // analog A1-4
+MoistureSensor moistSensor4(A4); // analog A1-4
+
+Relay pumpController(1, 2, 3, 4); // digital D1-4
 
 void setup()
 {
     Serial.begin(9600);
 
     // Only needed to get debugging working immediately. No need in "prod".
+
     while (!Serial)
     {
         ;
     }
 
-    if (!flashController.readCredentialsFromFlash())
-    {
-        // Read was not successful, data needs to be acquired via BLE
-        Serial.println("Acquire data via BLE");
+    /*
+      if (!flashController.readCredentialsFromFlash())
+      {
+          // Read was not successful, data needs to be acquired via BLE
+          Serial.println("Acquire data via BLE");
 
-        // bleController declaration can probably be at the top of the program
-        BLEController bleController;
-        bleController.advertiseServiceAndPair("Plantuino");
+          // bleController declaration can probably be at the top of the program
+          BLEController bleController;
+          bleController.advertiseServiceAndPair("Plantuino");
 
-        // Store received credentials inside flashController
-        // to write to Flash and for later access.
-        flashController.setTOKEN(bleController.getReceivedToken());
-        flashController.setSSID(bleController.getReceivedWiFiSSID());
-        flashController.setPASSWORD(bleController.getReceivedWiFiPassword());
-        flashController.writeCredentialsToFlash();
+          // Store received credentials inside flashController
+          // to write to Flash and for later access.
+          flashController.setTOKEN(bleController.getReceivedToken());
+          flashController.setSSID(bleController.getReceivedWiFiSSID());
+          flashController.setPASSWORD(bleController.getReceivedWiFiPassword());
+          flashController.writeCredentialsToFlash();
 
-        Serial.println("Credentials retrieved and written to flash successfully.");
-    }
+          Serial.println("Credentials retrieved and written to flash successfully.");
+      }
+      else
+      {
+        Serial.println("WiFi credentials acquired from Flash.");
+      }
 
-    // Connect to WiFi
+      // Connect to WiFi
 
-    if (wifiController.connectToNetwork(flashController.getSSID(), flashController.getPASSWORD()))
-    {
-        Serial.println("Connected to WiFi network.");
-    }
+      if (wifiController.connectToNetwork(flashController.getSSID(), flashController.getPASSWORD()))
+      {
+          Serial.println("Connected to WiFi network.");
+      }
+      */
 }
 
 void loop()
@@ -81,28 +91,10 @@ void loop()
     Serial.println(path);
     webSocketController.openConnectionWithToken(path.c_str());
 
-    plantController.setThreshold(1, 35);
-    plantController.setThreshold(2, 45);
-    plantController.setThreshold(3, 55);
-
     while (webSocketController.isConnected())
     {
         Serial.println("WebSocket isConnected.");
         delay(1000);
-
-        /*
-         * plantController has a private member m_plants[4]. Each item in the list
-         * is a PlantInfo struct, which has:
-         *
-         * bool watering = false
-         * int wateringThreshold
-         * int currentMoisture
-         * int plantIndex
-         *
-         * Every 'x' minutes, read the moisture levels of the plants.
-         * Store read moistures into an array of four integers.
-         * Pass these values to the waterWhenNeeded function.
-         */
 
         static unsigned long lastActionTime = 0;
         unsigned long currentTime = millis();
@@ -112,24 +104,40 @@ void loop()
         {
             Serial.println(
                 "Time is up. Reading moistures, watering when needed, and sending DeviceMeasurement over WebSocket.");
-            // int plantMoisture1 = moistSensor2.getMoisture();
-            // int plantMoisture2 = moistSensor3.getMoisture();
-            // int plantMoisture3 = moistSensor4.getMoisture();
-            // int plantMoisture4 = moistSensor5.getMoisture();
-            int plantMoisture1 = random(10, 91);
-            int plantMoisture2 = random(10, 91);
-            int plantMoisture3 = random(10, 91);
-            int plantMoisture4 = random(10, 91);
-            int plantMoistures[4] = {plantMoisture1, plantMoisture2, plantMoisture3, plantMoisture4};
+            int plantMoisture1 = 100; // moistSensor2.getMoisture();
+            int plantMoisture2 = moistSensor2.getMoisture();
+            int plantMoisture3 = moistSensor3.getMoisture();
+            int plantMoisture4 = moistSensor4.getMoisture();
+            // int plantMoisture1 = random(10, 91);
 
-            plantController.printArray();
+            int plantMoistures[4] = {plantMoisture1, plantMoisture2, plantMoisture3, plantMoisture4};
             plantController.waterWhenNeeded(plantMoistures);
 
-            // Send temperature measurement and tank level
-            // webSocketController.sendDeviceMeasurement(tempSensor.getTemperature(), distSensor.getDistance());
+            // Get temperature
+            float temperature;
+            if (tempSensor.readTemperature())
+            {
+                temperature = tempSensor.getTemperature();
+            }
+
+            // Get tank level
+            int distance;
+            if (distSensor.readDistance())
+            {
+                distance = distSensor.getDistance();
+            }
+
+            // Send measurements
             // Some way of translating the distance measurement into a need of watering needs to be implemented.
             // e.g. if distance > x --> tank level is low
-            webSocketController.sendDeviceMeasurement(23.3, 15);
+            webSocketController.sendDeviceMeasurement(temperature, distance);
+            delay(1000);
+
+            // Send moisture levels
+            webSocketController.sendPlantInfo(plantMoisture1, 1);
+            webSocketController.sendPlantInfo(plantMoisture2, 2);
+            webSocketController.sendPlantInfo(plantMoisture3, 3);
+            webSocketController.sendPlantInfo(plantMoisture4, 4);
 
             lastActionTime = currentTime;
         }
@@ -139,12 +147,10 @@ void loop()
         if (messageSize > 0)
         {
             String receivedMessage = webSocketController.readString();
-            Serial.print("Received message: ");
-            Serial.println(receivedMessage);
 
+            // Received message starts with 'set_watering_t'
             if (receivedMessage.indexOf("set_watering_t") != -1)
             {
-                // Received message starts with 'set_watering_t'
                 Serial.println("Received set_watering_t");
                 int valueIndex = receivedMessage.indexOf("val=") + 4;
                 int indexIndex = receivedMessage.indexOf("index=") + 6;
@@ -154,15 +160,17 @@ void loop()
 
                 plantController.setThreshold(plantIndex, wateringThreshold);
             }
+
+            // Received message starts with 'activate_pump'
             else if (receivedMessage.indexOf("activate_pump") != -1)
             {
-                // Received message starts with 'activate_pump'
-                Serial.println("Received activate_pump");
                 int indexIndex = receivedMessage.indexOf("index=") + 6;
                 int plantIndex = receivedMessage.substring(indexIndex).toInt();
 
                 plantController.activatePump(plantIndex);
             }
+
+            // Message not recognized.
             else
             {
                 Serial.println("Received message not recognized.");
@@ -171,64 +179,58 @@ void loop()
     }
 
     /*
-      pumpController.activatePump(1, 2000);
-      pumpController.activatePump(2, 2000);
-      pumpController.activatePump(3, 2000);
-      pumpController.activatePump(4, 2000);
-      */
+    if (tempSensor.readTemperature()) {
+      int temperature = tempSensor.getTemperature();
+      Serial.print("Temperature: ");
+      Serial.println(temperature);
+    }
+    */
 
     /*
-      // Temperature readings incorrect, needs fix. Tested with every component connected.
-      if (tempSensor.readTemperature())
-      {
-          int temperature = tempSensor.getTemperature();
-          Serial.print("Temperature: ");
-          Serial.println(temperature);
+    if (distSensor.readDistance()) {
+      long distance = distSensor.getDistance();
+      Serial.print("Distance: ");
+      Serial.println(distance);
+    }
+    delay(2000);
+    */
 
-      }
-      */
+    /* //rip sensor 1
+    if (moistSensor1.readMoisture()) {
+      int moisture = moistSensor1.getMoisture();
+      Serial.print("Moisture (1) %: ");
+      Serial.println(moisture);
+    }
+    delay(2000);
+
+    if (moistSensor2.readMoisture()) {
+      int moisture = moistSensor2.getMoisture();
+      Serial.print("Moisture (2) %: ");
+      Serial.println(moisture);
+    }
+    delay(2000);
+
+    if (moistSensor3.readMoisture()) {
+      int moisture = moistSensor3.getMoisture();
+      Serial.print("Moisture (3) %: ");
+      Serial.println(moisture);
+    }
+    delay(2000);
+
+    if (moistSensor4.readMoisture()) {
+      int moisture = moistSensor4.getMoisture();
+      Serial.print("Moisture (4) %: ");
+      Serial.println(moisture);
+    }
+    delay(2000);
+    */
 
     /*
-      // Moisture sensors require calibration. Now giving 120%ish to 147%ish for dry and wet.
-      if (distSensor.readDistance()) {
-        long distance = distSensor.getDistance();
-        Serial.print("Distance: ");
-        Serial.println(distance);
-      }
-      delay(2000);
-
-      if (moistSensor2.readMoisture())
-      {
-          int moisture = moistSensor2.getMoisture();
-          Serial.print("Moisture %: ");
-          Serial.println(moisture);
-      }
-      delay(2000);
-
-      if (moistSensor3.readMoisture())
-      {
-          int moisture = moistSensor3.getMoisture();
-          Serial.print("Moisture %: ");
-          Serial.println(moisture);
-      }
-      delay(2000);
-
-      if (moistSensor4.readMoisture())
-      {
-          int moisture = moistSensor4.getMoisture();
-          Serial.print("Moisture %: ");
-          Serial.println(moisture);
-      }
-      delay(2000);
-
-      if (moistSensor5.readMoisture())
-      {
-          int moisture = moistSensor5.getMoisture();
-          Serial.print("Moisture %: ");
-          Serial.println(moisture);
-      }
-      delay(2000);
-      */
+    pumpController.activatePump(1, 2000);
+    pumpController.activatePump(2, 2000);
+    pumpController.activatePump(3, 2000);
+    pumpController.activatePump(4, 2000);
+    */
 
     Serial.println("Resetting in 3 seconds.");
     Serial.println("-------------------------");

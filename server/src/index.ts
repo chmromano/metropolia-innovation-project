@@ -16,6 +16,7 @@ import {
   parseOperation,
   webSocketRawDataToString,
 } from "./deviceOperations";
+import { createNewUser } from "./graphql/mutations/addUser.helpers";
 import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/schema";
 import Device from "./models/device";
@@ -80,9 +81,10 @@ const start = async () => {
             const decodedToken = authUtils.decodeMobileAppToken(token);
 
             if (decodedToken.type === "MobileAppToken") {
-              const currentUser = await User.findOne({
-                authUid: decodedToken.authUid,
-              }).exec();
+              const currentUser =
+                (await User.findOne({
+                  authUid: decodedToken.authUid,
+                }).exec()) || (await createNewUser(decodedToken.authUid));
 
               return { currentUser };
             }
@@ -116,8 +118,6 @@ const start = async () => {
       socket.destroy();
       return;
     }
-
-    console.log(token);
 
     void (async () => {
       try {

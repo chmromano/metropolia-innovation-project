@@ -30,7 +30,6 @@ export const parseString = (string: unknown): string => {
 };
 
 export const toDeviceToken = (object: unknown): Token => {
-  console.log(JSON.stringify(object, null, 2));
   if (
     object &&
     typeof object === "object" &&

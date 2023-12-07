@@ -1,8 +1,7 @@
 import * as SecureStore from "expo-secure-store";
 import { print } from "graphql";
 import "react-native-get-random-values";
-// TODO: this will be needed
-// import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 
 import constants from "./config/constants";
 import { ADD_USER } from "./graphql/mutations";
@@ -14,23 +13,12 @@ const checkResponseOk = (response: Response) => {
   }
 };
 
-// TODO: get rid of this
-const deleteKey = async () => {
-  await SecureStore.deleteItemAsync(constants.SECURE_STORE_JWT_KEY_NAME);
-};
-
 export const retrieveTokenForUser = async () => {
-  // TODO: get rid of this
-  await deleteKey();
-
   const storedToken = await SecureStore.getItemAsync(
     constants.SECURE_STORE_JWT_KEY_NAME
   );
 
-  const token =
-    storedToken ||
-    // TODO: fix this
-    (await fetchTokenForUser("test_user_id" /* uuidv4() */)).value;
+  const token = storedToken || (await fetchTokenForUser(uuidv4())).value;
 
   if (storedToken === null) {
     await SecureStore.setItemAsync(constants.SECURE_STORE_JWT_KEY_NAME, token);

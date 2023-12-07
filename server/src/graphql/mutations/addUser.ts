@@ -1,49 +1,23 @@
-import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 
-import User from "../../models/user";
+import { createNewUser, findExistingUser } from "./addUser.helpers";
 import { MobileAppToken } from "../../types/types";
-import { isString } from "../../types/typeUtils";
 import config from "../../utils/config";
+import { validateUserId } from "../utils/validationUtils";
 
 interface Args {
-  userId: string;
+  userId: unknown;
 }
 
 export const addUser = async (_root: unknown, args: Args) => {
-  if (!isString(args.userId)) {
-    throw new GraphQLError("Invalid user id", {
-      extensions: {
-        code: "BAD_USER_INPUT",
-        invalidArgs: args.userId,
-      },
-    });
-  }
+  const userId = validateUserId(args.userId);
 
-  let user = await User.findOne({
-    authUid: args.userId,
-  }).exec();
-
-  if (user === null) {
-    user = new User({
-      authUid: args.userId,
-      displayName: "Plantonaut",
-    });
-
-    try {
-      await user.save();
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new GraphQLError(
-          `There was an error saving the user: ${error.message}`
-        );
-      }
-    }
-  }
+  const user =
+    (await findExistingUser(userId)) || (await createNewUser(userId));
 
   const token: MobileAppToken = {
     type: "MobileAppToken",
-    authUid: args.userId,
+    authUid: user.authUid,
   };
 
   return { value: jwt.sign(token, config.MOBILE_APP_JWT_SECRET) };

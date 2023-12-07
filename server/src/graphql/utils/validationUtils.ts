@@ -174,3 +174,47 @@ export const validatePlantName = (plantName: unknown): string => {
 
   return plantName;
 };
+
+export const validateUserId = (id: unknown): string => {
+  if (!isString(id)) {
+    throw new GraphQLError("Invalid user ID", {
+      extensions: {
+        code: "BAD_USER_INPUT",
+        invalidArgs: id,
+      },
+    });
+  }
+
+  if (id.trim() === "") {
+    throw new GraphQLError("User ID cannot be empty", {
+      extensions: {
+        code: "BAD_USER_INPUT",
+        invalidArgs: id,
+      },
+    });
+  }
+
+  return id;
+};
+
+export const validateDeviceId = (id: unknown): string => {
+  if (!isString(id)) {
+    throw new GraphQLError("Invalid device ID", {
+      extensions: {
+        code: "BAD_USER_INPUT",
+        invalidArgs: id,
+      },
+    });
+  }
+
+  if (id.trim() === "") {
+    throw new GraphQLError("Device ID cannot be empty", {
+      extensions: {
+        code: "BAD_USER_INPUT",
+        invalidArgs: id,
+      },
+    });
+  }
+
+  return id;
+};

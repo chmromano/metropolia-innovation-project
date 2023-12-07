@@ -22,6 +22,7 @@ export const generateHardwareToken = (
   context: Context
 ) => {
   const user = validateUserAuthentication(context.currentUser);
+
   const hardwareId = validateHardwareId(args.hardwareId);
 
   const token: EmbeddedDeviceToken = {

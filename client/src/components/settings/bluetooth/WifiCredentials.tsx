@@ -110,7 +110,7 @@ const WifiCredentials = ({ route, navigation }: WifiCredentialsProps) => {
         },
       ]);
     } catch (error) {
-      console.log("Bluetooth pairing process failed", error);
+      console.error(error);
       Alert.alert("Connection Failed", "Failed to connect to the device.", [
         {
           text: "OK",

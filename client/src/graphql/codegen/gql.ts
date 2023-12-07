@@ -21,10 +21,16 @@ const documents = {
     types.AddUserDocument,
   "\n  mutation waterPlant($hardwareId: String!, $plantIndex: Int!) {\n    waterPlant(hardwareId: $hardwareId, plantIndex: $plantIndex)\n  }\n":
     types.WaterPlantDocument,
+  "\n  mutation editPlant(\n    $plantId: String!\n    $plantName: String\n    $wateringLevel: Float\n  ) {\n    editPlant(\n      plantId: $plantId\n      plantName: $plantName\n      wateringLevel: $wateringLevel\n    ) {\n      id\n    }\n  }\n":
+    types.EditPlantDocument,
   "\n  query getDevices {\n    getDevices {\n      id\n      name\n    }\n  }\n":
     types.GetDevicesDocument,
-  "\n  query getPlants {\n    getPlants {\n      id\n      name\n      plantIndex\n    }\n  }\n":
+  "\n  query getPlants {\n    getPlants {\n      id\n      name\n      plantIndex\n      device {\n        hardwareId\n      }\n    }\n  }\n":
     types.GetPlantsDocument,
+  "\n  query getPlantMeasurements($plantId: String!) {\n    getPlantMeasurements(plantId: $plantId) {\n      timestamp\n      soilMoisture\n    }\n  }\n":
+    types.GetPlantMeasurementsDocument,
+  "\n  query getDeviceMeasurements($deviceId: String!) {\n    getDeviceMeasurements(deviceId: $deviceId) {\n      timestamp\n      temperature\n      tankLevel\n    }\n  }\n":
+    types.GetDeviceMeasurementsDocument,
 };
 
 /**
@@ -69,14 +75,32 @@ export function gql(
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
+  source: "\n  mutation editPlant(\n    $plantId: String!\n    $plantName: String\n    $wateringLevel: Float\n  ) {\n    editPlant(\n      plantId: $plantId\n      plantName: $plantName\n      wateringLevel: $wateringLevel\n    ) {\n      id\n    }\n  }\n"
+): (typeof documents)["\n  mutation editPlant(\n    $plantId: String!\n    $plantName: String\n    $wateringLevel: Float\n  ) {\n    editPlant(\n      plantId: $plantId\n      plantName: $plantName\n      wateringLevel: $wateringLevel\n    ) {\n      id\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
   source: "\n  query getDevices {\n    getDevices {\n      id\n      name\n    }\n  }\n"
 ): (typeof documents)["\n  query getDevices {\n    getDevices {\n      id\n      name\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  query getPlants {\n    getPlants {\n      id\n      name\n      plantIndex\n    }\n  }\n"
-): (typeof documents)["\n  query getPlants {\n    getPlants {\n      id\n      name\n      plantIndex\n    }\n  }\n"];
+  source: "\n  query getPlants {\n    getPlants {\n      id\n      name\n      plantIndex\n      device {\n        hardwareId\n      }\n    }\n  }\n"
+): (typeof documents)["\n  query getPlants {\n    getPlants {\n      id\n      name\n      plantIndex\n      device {\n        hardwareId\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  query getPlantMeasurements($plantId: String!) {\n    getPlantMeasurements(plantId: $plantId) {\n      timestamp\n      soilMoisture\n    }\n  }\n"
+): (typeof documents)["\n  query getPlantMeasurements($plantId: String!) {\n    getPlantMeasurements(plantId: $plantId) {\n      timestamp\n      soilMoisture\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(
+  source: "\n  query getDeviceMeasurements($deviceId: String!) {\n    getDeviceMeasurements(deviceId: $deviceId) {\n      timestamp\n      temperature\n      tankLevel\n    }\n  }\n"
+): (typeof documents)["\n  query getDeviceMeasurements($deviceId: String!) {\n    getDeviceMeasurements(deviceId: $deviceId) {\n      timestamp\n      temperature\n      tankLevel\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

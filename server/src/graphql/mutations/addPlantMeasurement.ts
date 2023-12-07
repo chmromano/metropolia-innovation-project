@@ -24,6 +24,7 @@ export const addPlantMeasurement = async (
   context: Context
 ) => {
   const device = validateDeviceAuthentication(context.currentDevice);
+
   const soilMoisture = validateSoilMoisture(args.soilMoisture);
   const plantIndex = validatePlantIndex(args.plantIndex);
 
@@ -47,6 +48,5 @@ export const addPlantMeasurement = async (
   return {
     soilMoisture: plantMeasurement.soilMoisture,
     timestamp: plantMeasurement.timestamp,
-    metadata: { id: plant._id },
   };
 };

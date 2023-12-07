@@ -69,7 +69,7 @@ export type MutationAddDeviceMeasurementArgs = {
 
 export type MutationAddPlantMeasurementArgs = {
   plantIndex: Scalars["Int"]["input"];
-  soilMoisture: Scalars["Int"]["input"];
+  soilMoisture: Scalars["Float"]["input"];
 };
 
 export type MutationAddUserArgs = {
@@ -79,7 +79,7 @@ export type MutationAddUserArgs = {
 export type MutationEditPlantArgs = {
   plantId: Scalars["String"]["input"];
   plantName?: InputMaybe<Scalars["String"]["input"]>;
-  wateringLevel?: InputMaybe<Scalars["Int"]["input"]>;
+  wateringLevel?: InputMaybe<Scalars["Float"]["input"]>;
 };
 
 export type MutationGenerateHardwareTokenArgs = {
@@ -110,8 +110,18 @@ export type PlantMeasurement = {
 
 export type Query = {
   __typename?: "Query";
+  getDeviceMeasurements: Array<DeviceMeasurement>;
   getDevices: Array<Device>;
+  getPlantMeasurements: Array<PlantMeasurement>;
   getPlants: Array<Plant>;
+};
+
+export type QueryGetDeviceMeasurementsArgs = {
+  deviceId: Scalars["String"]["input"];
+};
+
+export type QueryGetPlantMeasurementsArgs = {
+  plantId: Scalars["String"]["input"];
 };
 
 export type Token = {
@@ -165,6 +175,17 @@ export type WaterPlantMutation = {
   waterPlant: boolean;
 };
 
+export type EditPlantMutationVariables = Exact<{
+  plantId: Scalars["String"]["input"];
+  plantName?: InputMaybe<Scalars["String"]["input"]>;
+  wateringLevel?: InputMaybe<Scalars["Float"]["input"]>;
+}>;
+
+export type EditPlantMutation = {
+  __typename?: "Mutation";
+  editPlant: { __typename?: "Plant"; id: string };
+};
+
 export type GetDevicesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetDevicesQuery = {
@@ -181,6 +202,34 @@ export type GetPlantsQuery = {
     id: string;
     name: string;
     plantIndex: number;
+    device: { __typename?: "Device"; hardwareId: string };
+  }>;
+};
+
+export type GetPlantMeasurementsQueryVariables = Exact<{
+  plantId: Scalars["String"]["input"];
+}>;
+
+export type GetPlantMeasurementsQuery = {
+  __typename?: "Query";
+  getPlantMeasurements: Array<{
+    __typename?: "PlantMeasurement";
+    timestamp: string;
+    soilMoisture: number;
+  }>;
+};
+
+export type GetDeviceMeasurementsQueryVariables = Exact<{
+  deviceId: Scalars["String"]["input"];
+}>;
+
+export type GetDeviceMeasurementsQuery = {
+  __typename?: "Query";
+  getDeviceMeasurements: Array<{
+    __typename?: "DeviceMeasurement";
+    timestamp: string;
+    temperature: number;
+    tankLevel: number;
   }>;
 };
 
@@ -423,6 +472,89 @@ export const WaterPlantDocument = {
     },
   ],
 } as unknown as DocumentNode<WaterPlantMutation, WaterPlantMutationVariables>;
+export const EditPlantDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "editPlant" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "plantId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "plantName" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "wateringLevel" },
+          },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Float" } },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "editPlant" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "plantId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "plantId" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "plantName" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "plantName" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "wateringLevel" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "wateringLevel" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<EditPlantMutation, EditPlantMutationVariables>;
 export const GetDevicesDocument = {
   kind: "Document",
   definitions: [
@@ -468,6 +600,19 @@ export const GetPlantsDocument = {
                 { kind: "Field", name: { kind: "Name", value: "id" } },
                 { kind: "Field", name: { kind: "Name", value: "name" } },
                 { kind: "Field", name: { kind: "Name", value: "plantIndex" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "device" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "hardwareId" },
+                      },
+                    ],
+                  },
+                },
               ],
             },
           },
@@ -476,3 +621,117 @@ export const GetPlantsDocument = {
     },
   ],
 } as unknown as DocumentNode<GetPlantsQuery, GetPlantsQueryVariables>;
+export const GetPlantMeasurementsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "getPlantMeasurements" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "plantId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "getPlantMeasurements" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "plantId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "plantId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "timestamp" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "soilMoisture" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetPlantMeasurementsQuery,
+  GetPlantMeasurementsQueryVariables
+>;
+export const GetDeviceMeasurementsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "getDeviceMeasurements" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: {
+            kind: "Variable",
+            name: { kind: "Name", value: "deviceId" },
+          },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "String" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "getDeviceMeasurements" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "deviceId" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "deviceId" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "timestamp" } },
+                { kind: "Field", name: { kind: "Name", value: "temperature" } },
+                { kind: "Field", name: { kind: "Name", value: "tankLevel" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetDeviceMeasurementsQuery,
+  GetDeviceMeasurementsQueryVariables
+>;

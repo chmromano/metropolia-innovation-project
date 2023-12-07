@@ -43,6 +43,8 @@ const typeDefs = /* GraphQL */ `
   type Query {
     getDevices: [Device!]!
     getPlants: [Plant!]!
+    getPlantMeasurements(plantId: String!): [PlantMeasurement!]!
+    getDeviceMeasurements(deviceId: String!): [DeviceMeasurement!]!
   }
 
   type Mutation {
@@ -52,9 +54,12 @@ const typeDefs = /* GraphQL */ `
     ): DeviceMeasurement
     addDevice(hardwareId: String!, supportedPlants: Int!): Device
     generateHardwareToken(hardwareId: String!): Token
-    addPlantMeasurement(soilMoisture: Int!, plantIndex: Int!): PlantMeasurement
+    addPlantMeasurement(
+      soilMoisture: Float!
+      plantIndex: Int!
+    ): PlantMeasurement
     addUser(userId: String!): Token
-    editPlant(plantId: String!, plantName: String, wateringLevel: Int): Plant!
+    editPlant(plantId: String!, plantName: String, wateringLevel: Float): Plant!
     waterPlant(hardwareId: String!, plantIndex: Int!): Boolean!
   }
 `;

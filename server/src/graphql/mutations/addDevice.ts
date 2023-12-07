@@ -27,6 +27,7 @@ export const addDevice = async (
   context: Context
 ) => {
   const user = validateUserAuthentication(context.currentUser);
+
   const hardwareId = validateHardwareId(args.hardwareId);
   const supportedPlants = validateSupportedPlants(args.supportedPlants);
 

@@ -3,11 +3,13 @@ name: Server CI
 on:
   pull_request:
   push:
+    branches:
+      - main
 
 jobs:
   server-ci:
     runs-on:
-      - ${{ (github.ref != 'refs/heads/main' && github.event_name != 'pull_request') && 'self-hosted' || 'ubuntu-latest' }}
+      - ubuntu-latest
 
     defaults:
       run:

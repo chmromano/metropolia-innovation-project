@@ -21,6 +21,7 @@ export const addDeviceMeasurement = async (
   context: Context
 ) => {
   const device = validateDeviceAuthentication(context.currentDevice);
+
   const temperature = validateTemperature(args.temperature);
   const tankLevel = validateTankLevel(args.tankLevel);
 
@@ -37,6 +38,5 @@ export const addDeviceMeasurement = async (
     temperature: deviceMeasurement.temperature,
     tankLevel: deviceMeasurement.tankLevel,
     timestamp: deviceMeasurement.timestamp,
-    metadata: { hardwareId: device._id },
   };
 };

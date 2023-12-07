@@ -3,11 +3,13 @@ name: React Native CI
 on:
   pull_request:
   push:
+    branches:
+      - main
 
 jobs:
   react-native-ci:
     runs-on:
-      - ${{ (github.ref != 'refs/heads/main' && github.event_name != 'pull_request') && 'self-hosted' || 'ubuntu-latest' }}
+      - ubuntu-latest
 
     defaults:
       run:

@@ -102,7 +102,7 @@ const addDeviceDataQuery =
   "mutation AddDeviceMeasurement($temperature: Float!, $tankLevel: Float!) { addDeviceMeasurement(temperature: $temperature, tankLevel: $tankLevel) { metadata { id } } }";
 
 const addPlantDataQuery =
-  "mutation AddPlantMeasurement($soilMoisture: Int!, $plantIndex: Int!) { addPlantMeasurement(soilMoisture: $soilMoisture, plantIndex: $plantIndex) { metadata { id } } }";
+  "mutation AddPlantMeasurement($soilMoisture: Float!, $plantIndex: Int!) { addPlantMeasurement(soilMoisture: $soilMoisture, plantIndex: $plantIndex) { metadata { id } } }";
 
 export const getGqlDataFromOperation = (operation: Operation) => {
   if (operation.type === "AddDeviceDataOperation") {

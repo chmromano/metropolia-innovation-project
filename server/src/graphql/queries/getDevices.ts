@@ -1,7 +1,7 @@
-import { GraphQLError } from "graphql";
-
 import Device from "../../models/device";
+import { IPlant } from "../../models/plant";
 import { IUser } from "../../models/user";
+import { validateUserAuthentication } from "../utils/validationUtils";
 
 interface Context {
   currentUser: IUser;
@@ -12,15 +12,11 @@ export const getDevices = async (
   _args: unknown,
   context: Context
 ) => {
-  if (!context.currentUser) {
-    throw new GraphQLError("Not authenticated", {
-      extensions: {
-        code: "UNAUTHENTICATED",
-      },
-    });
-  }
+  const user = validateUserAuthentication(context.currentUser);
 
-  const devices = await Device.find({ user: context.currentUser._id });
+  const devices = await Device.find({ user: user._id }).populate<{
+    plants: IPlant[];
+  }>("plants");
 
   return devices;
 };

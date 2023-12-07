@@ -29,3 +29,19 @@ export const WATER_PLANT = gql(/* GraphQL */ `
     waterPlant(hardwareId: $hardwareId, plantIndex: $plantIndex)
   }
 `);
+
+export const EDIT_PLANT = gql(/* GraphQL */ `
+  mutation editPlant(
+    $plantId: String!
+    $plantName: String
+    $wateringLevel: Float
+  ) {
+    editPlant(
+      plantId: $plantId
+      plantName: $plantName
+      wateringLevel: $wateringLevel
+    ) {
+      id
+    }
+  }
+`);

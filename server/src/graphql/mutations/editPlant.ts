@@ -27,6 +27,7 @@ export const editPlant = async (
   context: Context
 ) => {
   validateUserAuthentication(context.currentUser);
+
   const plantId = validatePlantId(args.plantId);
   const plantName = args.plantName ? validatePlantName(args.plantName) : null;
   const wateringLevel = args.wateringLevel

@@ -1,5 +1,10 @@
 import { useMemo, useState } from "react";
-import { BleManager, Characteristic, Device } from "react-native-ble-plx";
+import {
+  BleManager,
+  Characteristic,
+  Device,
+  State,
+} from "react-native-ble-plx";
 
 import constants from "../../../../config/constants";
 import { Token } from "../../../../types/types";
@@ -23,6 +28,8 @@ export interface BluetoothHook {
   disconnectFromDevice: () => void;
 }
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const useBluetooth = (): BluetoothHook => {
   const bleManager = useMemo(() => new BleManager(), []);
   const [allDevices, setAllDevices] = useState<Device[]>([]);
@@ -30,9 +37,16 @@ const useBluetooth = (): BluetoothHook => {
 
   const scanForPeripherals = () => {
     bleManager.startDeviceScan(null, null, (error, device) => {
+      void (async () => {
+        let state = await bleManager.state();
+        while (state === State.Unknown) {
+          await delay(500);
+          state = await bleManager.state();
+        }
+      })();
+
       if (error) {
-        console.log(error);
-        return;
+        console.error(error);
       }
 
       if (device && device.name?.includes("")) {
@@ -72,8 +86,6 @@ const useBluetooth = (): BluetoothHook => {
     wifiSsid: string,
     wifiPassword: string
   ) => {
-    console.log(wifiSsid, wifiPassword);
-
     const writeWifiCredentialsPromises = [
       writeCharacteristic(
         device,

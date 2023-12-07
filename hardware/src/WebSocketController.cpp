@@ -34,9 +34,8 @@ void WebSocketController::sendDeviceMeasurement(float temp, int tanklvl)
     this->m_client.print(msg);
     this->m_client.endMessage();
 
-    Serial.print("Sent: ");
+    Serial.print("Sent from sendDeviceMeasurement: ");
     Serial.println(msg);
-    Serial.println("endMessage");
 }
 
 void WebSocketController::sendPlantInfo(float moisture, int index)
@@ -48,9 +47,8 @@ void WebSocketController::sendPlantInfo(float moisture, int index)
     this->m_client.print(msg);
     this->m_client.endMessage();
 
-    Serial.print("Sent: ");
+    Serial.print("Sent from AddPlantDataOperation: ");
     Serial.println(msg);
-    Serial.println("endMessage");
 }
 
 int WebSocketController::parseMessage()

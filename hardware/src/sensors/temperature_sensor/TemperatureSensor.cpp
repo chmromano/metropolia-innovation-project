@@ -16,9 +16,6 @@ bool TemperatureSensor::readTemperature()
 
     if (a)
     {
-        Serial.print("Analog value for temperature: ");
-        Serial.println(a);
-
         const float R0 = this->m_res;
         const float B = this->m_bValue;
         const float R = R0 * (4095.0 / a - 1.0);
@@ -27,11 +24,7 @@ bool TemperatureSensor::readTemperature()
         // R = this->m_res * R;
         // float temperature = 1.0 / (log(R / this->m_res) / this->m_bValue + 1 / 298.15) - 273.15;
 
-        Serial.print("Actual value for temperature: ");
-        Serial.println(temperature);
-
         this->m_currentTemperature = temperature;
-
         return true;
     }
 

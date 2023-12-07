@@ -12,7 +12,7 @@ bool WiFiController::connectToNetwork(char *ssid, char *pass)
         Serial.print("Attempting to connect. Attempt number: ");
         Serial.println(attemptCounter + 1);
 
-        if (attemptCounter < 5)
+        if (attemptCounter < 10)
         {
             attemptCounter++;
 

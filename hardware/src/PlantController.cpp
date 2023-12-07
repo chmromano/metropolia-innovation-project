@@ -71,9 +71,10 @@ void PlantController::waterWhenNeeded(int moistures[4])
 
     for (int i = 0; i < 4; i++)
     {
+        this->m_plants[i].currentMoisture = moistures[i];
+
         if (this->m_plants[i].watering)
         {
-            this->m_plants[i].currentMoisture = moistures[i];
 
             if (this->m_plants[i].currentMoisture < this->m_plants[i].wateringThreshold)
             {
@@ -98,7 +99,7 @@ void PlantController::waterWhenNeeded(int moistures[4])
 
 void PlantController::activatePump(int index)
 {
-    this->m_pumpController.activatePump(index, 2000);
+    this->m_pumpController.activatePump(index + 1, 2000);
 }
 
 void PlantController::printArray()
@@ -106,21 +107,31 @@ void PlantController::printArray()
     Serial.println("***** printArray *****");
     for (int i = 0; i < 4; i++)
     {
-        Serial.println();
-        Serial.println();
-
         PlantInfo plant = this->m_plants[i];
         Serial.print("Printing plant at index: ");
         Serial.println(i);
 
         Serial.print("Watering: ");
-        Serial.println(plant.watering);
-        Serial.print("Watering threshold: ");
-        Serial.println(plant.wateringThreshold);
-        Serial.print("Current moisture: ");
-        Serial.println(plant.currentMoisture);
-        Serial.print("Plant index: ");
+        Serial.print(plant.watering);
+        Serial.print(". Watering threshold: ");
+        Serial.print(plant.wateringThreshold);
+        Serial.print(". Current moisture: ");
+        Serial.print(plant.currentMoisture);
+        Serial.print(". Plant index: ");
         Serial.println(plant.plantIndex);
     }
     Serial.println("***** end printArray *****");
+}
+
+PlantInfo *PlantController::getPlantList()
+{
+    return this->m_plants;
+}
+
+void PlantController::setPlantList(PlantInfo plantList[4])
+{
+    for (int i = 0; i < 4; i++)
+    {
+        this->m_plants[i] = plantList[i];
+    }
 }

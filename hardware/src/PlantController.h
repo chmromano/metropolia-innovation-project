@@ -27,6 +27,10 @@ class PlantController
     void printArray();
 
     PlantInfo m_plants[4];
+    // PlantInfo* m_plants;
+
+    PlantInfo *getPlantList();
+    void setPlantList(PlantInfo plantList[4]);
 
   private:
     void initArray();

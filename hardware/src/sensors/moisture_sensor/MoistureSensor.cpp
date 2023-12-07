@@ -8,10 +8,6 @@ MoistureSensor::MoistureSensor(int pin)
 bool MoistureSensor::readMoisture()
 {
     int moistureAnalogicVal = analogRead(this->m_analogPin);
-
-    Serial.print("Analog value for moisture: ");
-    Serial.println(moistureAnalogicVal);
-
     int percentageMoisture;
 
     if (this->m_analogPin == A3)
@@ -23,11 +19,7 @@ bool MoistureSensor::readMoisture()
         percentageMoisture = map(moistureAnalogicVal, WET_THRESHOLD, DRY_THRESHOLD, 100, 0);
     }
 
-    Serial.print("Percentage: ");
-    Serial.println(percentageMoisture);
-
     this->m_currentMoisturePerc = percentageMoisture;
-
     return true;
 }
 

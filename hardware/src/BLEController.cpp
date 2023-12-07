@@ -45,7 +45,7 @@ void BLEController::advertiseServiceAndPair(const char *bleName)
         BLEDevice central = BLE.central();
         if (central)
         {
-            Serial.println("Connected.");
+            Serial.println("Bluetooth device connected.");
 
             bool tokenReceived = false;
             bool ssidReceived = false;
@@ -53,7 +53,6 @@ void BLEController::advertiseServiceAndPair(const char *bleName)
 
             while (central.connected())
             {
-                // delay(1000);
 
                 if (tokenCharacteristic.written())
                 {
@@ -85,6 +84,7 @@ void BLEController::advertiseServiceAndPair(const char *bleName)
                 // Everything received, return from function
                 if (tokenReceived && ssidReceived && passwordReceived)
                 {
+                    delay(500);
                     BLE.stopAdvertise();
                     return;
                 }

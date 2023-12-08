@@ -1,14 +1,12 @@
-import { Schema, model } from "mongoose";
+import { Document, Schema, model } from "mongoose";
 import uniqueValidator from "mongoose-unique-validator";
-
-import { WateringLevel } from "../types/types";
 
 export interface IPlant extends Document {
   _id: Schema.Types.ObjectId;
   name: string;
   device: Schema.Types.ObjectId;
   plantIndex: number;
-  wateringLevel: WateringLevel;
+  wateringLevel: number;
   user: Schema.Types.ObjectId;
 }
 

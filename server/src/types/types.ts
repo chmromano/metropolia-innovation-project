@@ -1,7 +1,7 @@
-export enum ClientType {
-  EmbeddedDevice = "embedded-device",
-  MobileApp = "mobile-app",
-}
+import { WebSocket } from "ws";
+
+import { IDevice } from "../models/device";
+import { IUser } from "../models/user";
 
 interface BaseToken {
   authUid: string;
@@ -18,9 +18,7 @@ export interface EmbeddedDeviceToken extends BaseToken {
 
 export type Token = MobileAppToken | EmbeddedDeviceToken;
 
-export enum WateringLevel {
-  Never = 0,
-  Dry = 1,
-  Moist = 2,
-  Wet = 3,
+export interface CustomSocket extends WebSocket {
+  currentUser: IUser;
+  currentDevice: IDevice;
 }

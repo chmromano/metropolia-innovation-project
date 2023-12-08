@@ -1,0 +1,8 @@
+POST http://localhost:3000/ HTTP/1.1
+content-type: application/json
+authorization: Bearer
+
+{
+  "query": "mutation AddPlantMeasurement($soilMoisture: Int!, $plantIndex: Int!) { addPlantMeasurement(soilMoisture: $soilMoisture, plantIndex: $plantIndex) { metadata { id } } }",
+  "variables": { "soilMoisture": 51, "plantIndex": 1 }
+}

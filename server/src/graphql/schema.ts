@@ -4,6 +4,7 @@ const typeDefs = /* GraphQL */ `
     hardwareId: String!
     user: User!
     plants: [Plant!]!
+    name: String!
   }
 
   type Plant {
@@ -12,6 +13,7 @@ const typeDefs = /* GraphQL */ `
     device: Device!
     plantIndex: Int!
     user: User!
+    wateringLevel: Int!
   }
 
   type PlantMeasurement {
@@ -41,6 +43,8 @@ const typeDefs = /* GraphQL */ `
   type Query {
     getDevices: [Device!]!
     getPlants: [Plant!]!
+    getPlantMeasurements(plantId: String!): [PlantMeasurement!]!
+    getDeviceMeasurements(deviceId: String!): [DeviceMeasurement!]!
   }
 
   type Mutation {
@@ -48,9 +52,15 @@ const typeDefs = /* GraphQL */ `
       temperature: Float!
       tankLevel: Float!
     ): DeviceMeasurement
-    addDevice(hardwareId: String!, supportedPlants: Int!): Token
-    addPlantMeasurement(hardwareId: String!, plantIndex: Int!): PlantMeasurement
-    editPlant(plant: String!, name: String, wateringLevel: Int): Plant!
+    addDevice(hardwareId: String!, supportedPlants: Int!): Device
+    generateHardwareToken(hardwareId: String!): Token
+    addPlantMeasurement(
+      soilMoisture: Float!
+      plantIndex: Int!
+    ): PlantMeasurement
+    addUser(userId: String!): Token
+    editPlant(plantId: String!, plantName: String, wateringLevel: Float): Plant!
+    waterPlant(hardwareId: String!, plantIndex: Int!): Boolean!
   }
 `;
 

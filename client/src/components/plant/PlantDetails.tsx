@@ -2,10 +2,13 @@ import { useMutation, useQuery } from "@apollo/client";
 import { RouteProp } from "@react-navigation/core";
 import React, { useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Button,
   Dimensions,
   Modal,
+  RefreshControl,
+  ScrollView,
   Text,
   TextInput,
   View,
@@ -35,6 +38,23 @@ const PlantDetails = ({ route }: PlantDetailsProps) => {
     variables: { plantId: plant.plant.id },
   });
 
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+
+    try {
+      await plantMeasurements.refetch();
+      setRefreshing(false);
+    } catch (error) {
+      console.error(error);
+      setRefreshing(false);
+      Alert.alert("Refresh failed", "Could not refresh the data", [
+        { text: "OK" },
+      ]);
+    }
+  };
+
   const [waterPlant] = useMutation(WATER_PLANT);
   const [editPlant] = useMutation(EDIT_PLANT, {
     refetchQueries: [
@@ -44,11 +64,37 @@ const PlantDetails = ({ route }: PlantDetailsProps) => {
   });
 
   if (plantMeasurements.loading) {
-    return <Text>Loading devices...</Text>;
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   if (plantMeasurements.error || !plantMeasurements.data) {
-    return <Text>Something went wrong with the GraphQL query</Text>;
+    return (
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void onRefresh}
+          />
+        }
+      >
+        <Text>Could not load plant.</Text>
+      </ScrollView>
+    );
   }
 
   const handleEditPlantPress = async () => {
@@ -144,139 +190,153 @@ const PlantDetails = ({ route }: PlantDetailsProps) => {
   );
 
   return (
-    <View style={{ paddingLeft: 15, paddingRight: 15 }}>
-      <Text
-        style={{
-          fontSize: 20,
-          marginBottom: 5,
-        }}
-      >
-        Name:{" "}
+    <ScrollView
+      contentContainerStyle={{
+        flexGrow: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => void onRefresh}
+        />
+      }
+    >
+      <View style={{ paddingLeft: 15, paddingRight: 15 }}>
         <Text
           style={{
+            fontSize: 20,
+            marginBottom: 5,
+          }}
+        >
+          Name:{" "}
+          <Text
+            style={{
+              fontWeight: "bold",
+            }}
+          >
+            {plant.plant.name}
+          </Text>
+        </Text>
+        <Text
+          style={{
+            fontSize: 20,
+            marginBottom: 5,
+          }}
+        >
+          Current soil moisture: {plant.lastMeasurement?.soilMoisture}%
+        </Text>
+        <Text
+          style={{
+            fontSize: 20,
+            marginBottom: 5,
+          }}
+        >
+          Current watering level: {plant.plant.wateringLevel}%
+        </Text>
+
+        <Text
+          style={{
+            textAlign: "center",
+            fontSize: 20,
+            marginBottom: 10,
+            marginTop: 30,
             fontWeight: "bold",
           }}
         >
-          {plant.plant.name}
+          Soil humidity, %
         </Text>
-      </Text>
-      <Text
-        style={{
-          fontSize: 20,
-          marginBottom: 5,
-        }}
-      >
-        Current soil moisture: {plant.lastMeasurement?.soilMoisture}
-      </Text>
-      <Text
-        style={{
-          fontSize: 20,
-          marginBottom: 5,
-        }}
-      >
-        Current watering level: {plant.plant.wateringLevel}
-      </Text>
-
-      <Text
-        style={{
-          textAlign: "center",
-          fontSize: 20,
-          marginBottom: 10,
-          marginTop: 30,
-          fontWeight: "bold",
-        }}
-      >
-        Soil humidity, %
-      </Text>
-      <LineChart
-        data={{
-          labels: labels,
-          datasets: [
-            {
-              data: data,
-            },
-          ],
-        }}
-        width={Dimensions.get("window").width - 30} // from react-native
-        height={300}
-        chartConfig={{
-          backgroundColor: "#a5d6a7",
-          backgroundGradientFrom: "#a5d6a7",
-          backgroundGradientTo: "#a5d6a7",
-          decimalPlaces: 2, // optional, defaults to 2dp
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          style: {
-            borderRadius: 16,
-          },
-          propsForDots: { r: "0" },
-          fillShadowGradientOpacity: 0,
-        }}
-        bezier
-        style={{
-          marginVertical: 8,
-          borderRadius: 16,
-        }}
-      />
-      <Button title="Water plant" onPress={() => void handlePress()} />
-      <Button title="Edit plant" onPress={() => setModalVisible(true)} />
-
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View
-          style={{
-            borderRadius: 16,
-            marginTop: 50,
-            marginHorizontal: 20,
-            backgroundColor: "white",
-            padding: 20,
+        <LineChart
+          data={{
+            labels: labels,
+            datasets: [
+              {
+                data: data,
+              },
+            ],
           }}
+          width={Dimensions.get("window").width - 30} // from react-native
+          height={300}
+          chartConfig={{
+            backgroundColor: "#a5d6a7",
+            backgroundGradientFrom: "#a5d6a7",
+            backgroundGradientTo: "#a5d6a7",
+            decimalPlaces: 2, // optional, defaults to 2dp
+            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            style: {
+              borderRadius: 16,
+            },
+            propsForDots: { r: "0" },
+            fillShadowGradientOpacity: 0,
+          }}
+          bezier
+          style={{
+            marginVertical: 8,
+            borderRadius: 16,
+          }}
+        />
+        <Button title="Water plant" onPress={() => void handlePress()} />
+        <Button title="Edit plant" onPress={() => setModalVisible(true)} />
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
         >
-          <TextInput
-            placeholder="Plant Name"
-            value={plantName}
-            onChangeText={setPlantName}
+          <View
             style={{
-              height: 40,
-              width: "100%",
-              marginVertical: 10,
-              borderWidth: 1,
-              padding: 10,
-              borderRadius: 5,
-              borderColor: "#ddd",
-              backgroundColor: "#fff",
+              borderRadius: 16,
+              marginTop: 50,
+              marginHorizontal: 20,
+              backgroundColor: "white",
+              padding: 20,
             }}
-          />
-          <TextInput
-            placeholder="Watering Level"
-            value={wateringLevel}
-            onChangeText={setWateringLevel}
-            keyboardType="numeric"
-            style={{
-              height: 40,
-              width: "100%",
-              marginVertical: 10,
-              borderWidth: 1,
-              padding: 10,
-              borderRadius: 5,
-              borderColor: "#ddd",
-              backgroundColor: "#fff",
-            }}
-          />
-          <Button
-            title="Submit"
-            onPress={() => {
-              setModalVisible(false);
-              void handleEditPlantPress();
-            }}
-          />
-          <Button title="Cancel" onPress={() => setModalVisible(false)} />
-        </View>
-      </Modal>
-    </View>
+          >
+            <TextInput
+              placeholder="Plant Name"
+              value={plantName}
+              onChangeText={setPlantName}
+              style={{
+                height: 40,
+                width: "100%",
+                marginVertical: 10,
+                borderWidth: 1,
+                padding: 10,
+                borderRadius: 5,
+                borderColor: "#ddd",
+                backgroundColor: "#fff",
+              }}
+            />
+            <TextInput
+              placeholder="Watering Level"
+              value={wateringLevel}
+              onChangeText={setWateringLevel}
+              keyboardType="numeric"
+              style={{
+                height: 40,
+                width: "100%",
+                marginVertical: 10,
+                borderWidth: 1,
+                padding: 10,
+                borderRadius: 5,
+                borderColor: "#ddd",
+                backgroundColor: "#fff",
+              }}
+            />
+            <Button
+              title="Submit"
+              onPress={() => {
+                setModalVisible(false);
+                void handleEditPlantPress();
+              }}
+            />
+            <Button title="Cancel" onPress={() => setModalVisible(false)} />
+          </View>
+        </Modal>
+      </View>
+    </ScrollView>
   );
 };
 

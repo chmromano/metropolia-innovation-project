@@ -23,7 +23,7 @@ const documents = {
     types.WaterPlantDocument,
   "\n  mutation editPlant(\n    $plantId: String!\n    $plantName: String\n    $wateringLevel: Float\n  ) {\n    editPlant(\n      plantId: $plantId\n      plantName: $plantName\n      wateringLevel: $wateringLevel\n    ) {\n      id\n    }\n  }\n":
     types.EditPlantDocument,
-  "\n  query getDevicesWithLastMeasurement {\n    getDevicesWithLastMeasurement {\n      device {\n        id\n        name\n      }\n      lastMeasurement {\n        temperature\n        tankLevel\n      }\n    }\n  }\n":
+  "\n  query getDevicesWithLastMeasurement {\n    getDevicesWithLastMeasurement {\n      device {\n        id\n        name\n        hardwareId\n      }\n      lastMeasurement {\n        temperature\n        tankLevel\n      }\n    }\n  }\n":
     types.GetDevicesWithLastMeasurementDocument,
   "\n  query getPlantsWithLastMeasurement {\n    getPlantsWithLastMeasurement {\n      plant {\n        id\n        name\n        plantIndex\n        wateringLevel\n        device {\n          hardwareId\n        }\n      }\n      lastMeasurement {\n        soilMoisture\n      }\n    }\n  }\n":
     types.GetPlantsWithLastMeasurementDocument,
@@ -81,8 +81,8 @@ export function gql(
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(
-  source: "\n  query getDevicesWithLastMeasurement {\n    getDevicesWithLastMeasurement {\n      device {\n        id\n        name\n      }\n      lastMeasurement {\n        temperature\n        tankLevel\n      }\n    }\n  }\n"
-): (typeof documents)["\n  query getDevicesWithLastMeasurement {\n    getDevicesWithLastMeasurement {\n      device {\n        id\n        name\n      }\n      lastMeasurement {\n        temperature\n        tankLevel\n      }\n    }\n  }\n"];
+  source: "\n  query getDevicesWithLastMeasurement {\n    getDevicesWithLastMeasurement {\n      device {\n        id\n        name\n        hardwareId\n      }\n      lastMeasurement {\n        temperature\n        tankLevel\n      }\n    }\n  }\n"
+): (typeof documents)["\n  query getDevicesWithLastMeasurement {\n    getDevicesWithLastMeasurement {\n      device {\n        id\n        name\n        hardwareId\n      }\n      lastMeasurement {\n        temperature\n        tankLevel\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

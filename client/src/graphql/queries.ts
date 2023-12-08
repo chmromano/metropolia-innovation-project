@@ -6,6 +6,7 @@ export const GET_DEVICES_WITH_LAST_MEASUREMENTS = gql(/* GraphQL */ `
       device {
         id
         name
+        hardwareId
       }
       lastMeasurement {
         temperature

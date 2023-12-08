@@ -18,7 +18,7 @@ interface PlantListItemProps {
 const PlantListItem = ({ plant, navigation }: PlantListItemProps) => {
   const soilMoisture = plant.lastMeasurement?.soilMoisture || 0;
   const wateringLevel = plant.plant.wateringLevel || 0;
-  const progress = soilMoisture / wateringLevel;
+  const progress = wateringLevel === 0 ? 0 : soilMoisture / wateringLevel;
   const progressBarColor =
     progress < 0.3 ? "red" : progress < 0.6 ? "orange" : "green";
 

@@ -46,7 +46,7 @@ const useBluetooth = (): BluetoothHook => {
       })();
 
       if (error) {
-        console.error(error);
+        console.log(error);
       }
 
       if (device && device.name?.includes("")) {

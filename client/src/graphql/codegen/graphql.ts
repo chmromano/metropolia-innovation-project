@@ -208,7 +208,12 @@ export type GetDevicesWithLastMeasurementQuery = {
   __typename?: "Query";
   getDevicesWithLastMeasurement: Array<{
     __typename?: "DeviceWithMeasurement";
-    device: { __typename?: "Device"; id: string; name: string };
+    device: {
+      __typename?: "Device";
+      id: string;
+      name: string;
+      hardwareId: string;
+    };
     lastMeasurement?: {
       __typename?: "DeviceMeasurement";
       temperature: number;
@@ -613,6 +618,10 @@ export const GetDevicesWithLastMeasurementDocument = {
                     selections: [
                       { kind: "Field", name: { kind: "Name", value: "id" } },
                       { kind: "Field", name: { kind: "Name", value: "name" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "hardwareId" },
+                      },
                     ],
                   },
                 },

@@ -37,7 +37,7 @@
         repo: "https://{{ access_token }}@github.com/chmromano/metropolia-innovation-project.git"
         dest: /home/miggy/docker-station/projects/irrigation/repo
         single_branch: yes
-        version: create_bt_demo
+        version: main
 
     - name: "Pull nodeJS image"
       docker_image:
@@ -54,6 +54,7 @@
           - 3000:3000
         command: tail -f /dev/null
         networks:
+          - name: bridge
           - name: mongojs
         restart_policy: always
 
@@ -83,4 +84,4 @@
 
     - name: "Run npm start inside the container"
       command: >
-        docker exec backend-nodejs sh -c "cd /home/project-repo/server && nohup npm run dev &"
+        docker exec backend-nodejs sh -c "cd /home/project-repo/server && nohup npm start &"

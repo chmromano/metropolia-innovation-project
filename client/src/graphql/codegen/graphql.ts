@@ -46,6 +46,12 @@ export type DeviceMeasurement = {
   timestamp: Scalars["String"]["output"];
 };
 
+export type DeviceWithMeasurement = {
+  __typename?: "DeviceWithMeasurement";
+  device: Device;
+  lastMeasurement?: Maybe<DeviceMeasurement>;
+};
+
 export type Mutation = {
   __typename?: "Mutation";
   addDevice?: Maybe<Device>;
@@ -108,12 +114,20 @@ export type PlantMeasurement = {
   timestamp: Scalars["String"]["output"];
 };
 
+export type PlantWithMeasurement = {
+  __typename?: "PlantWithMeasurement";
+  lastMeasurement?: Maybe<PlantMeasurement>;
+  plant: Plant;
+};
+
 export type Query = {
   __typename?: "Query";
   getDeviceMeasurements: Array<DeviceMeasurement>;
   getDevices: Array<Device>;
+  getDevicesWithLastMeasurement: Array<DeviceWithMeasurement>;
   getPlantMeasurements: Array<PlantMeasurement>;
   getPlants: Array<Plant>;
+  getPlantsWithLastMeasurement: Array<PlantWithMeasurement>;
 };
 
 export type QueryGetDeviceMeasurementsArgs = {
@@ -186,23 +200,48 @@ export type EditPlantMutation = {
   editPlant: { __typename?: "Plant"; id: string };
 };
 
-export type GetDevicesQueryVariables = Exact<{ [key: string]: never }>;
+export type GetDevicesWithLastMeasurementQueryVariables = Exact<{
+  [key: string]: never;
+}>;
 
-export type GetDevicesQuery = {
+export type GetDevicesWithLastMeasurementQuery = {
   __typename?: "Query";
-  getDevices: Array<{ __typename?: "Device"; id: string; name: string }>;
+  getDevicesWithLastMeasurement: Array<{
+    __typename?: "DeviceWithMeasurement";
+    device: {
+      __typename?: "Device";
+      id: string;
+      name: string;
+      hardwareId: string;
+    };
+    lastMeasurement?: {
+      __typename?: "DeviceMeasurement";
+      temperature: number;
+      tankLevel: number;
+    } | null;
+  }>;
 };
 
-export type GetPlantsQueryVariables = Exact<{ [key: string]: never }>;
+export type GetPlantsWithLastMeasurementQueryVariables = Exact<{
+  [key: string]: never;
+}>;
 
-export type GetPlantsQuery = {
+export type GetPlantsWithLastMeasurementQuery = {
   __typename?: "Query";
-  getPlants: Array<{
-    __typename?: "Plant";
-    id: string;
-    name: string;
-    plantIndex: number;
-    device: { __typename?: "Device"; hardwareId: string };
+  getPlantsWithLastMeasurement: Array<{
+    __typename?: "PlantWithMeasurement";
+    plant: {
+      __typename?: "Plant";
+      id: string;
+      name: string;
+      plantIndex: number;
+      wateringLevel: number;
+      device: { __typename?: "Device"; hardwareId: string };
+    };
+    lastMeasurement?: {
+      __typename?: "PlantMeasurement";
+      soilMoisture: number;
+    } | null;
   }>;
 };
 
@@ -555,60 +594,50 @@ export const EditPlantDocument = {
     },
   ],
 } as unknown as DocumentNode<EditPlantMutation, EditPlantMutationVariables>;
-export const GetDevicesDocument = {
+export const GetDevicesWithLastMeasurementDocument = {
   kind: "Document",
   definitions: [
     {
       kind: "OperationDefinition",
       operation: "query",
-      name: { kind: "Name", value: "getDevices" },
+      name: { kind: "Name", value: "getDevicesWithLastMeasurement" },
       selectionSet: {
         kind: "SelectionSet",
         selections: [
           {
             kind: "Field",
-            name: { kind: "Name", value: "getDevices" },
+            name: { kind: "Name", value: "getDevicesWithLastMeasurement" },
             selectionSet: {
               kind: "SelectionSet",
               selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-                { kind: "Field", name: { kind: "Name", value: "name" } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<GetDevicesQuery, GetDevicesQueryVariables>;
-export const GetPlantsDocument = {
-  kind: "Document",
-  definitions: [
-    {
-      kind: "OperationDefinition",
-      operation: "query",
-      name: { kind: "Name", value: "getPlants" },
-      selectionSet: {
-        kind: "SelectionSet",
-        selections: [
-          {
-            kind: "Field",
-            name: { kind: "Name", value: "getPlants" },
-            selectionSet: {
-              kind: "SelectionSet",
-              selections: [
-                { kind: "Field", name: { kind: "Name", value: "id" } },
-                { kind: "Field", name: { kind: "Name", value: "name" } },
-                { kind: "Field", name: { kind: "Name", value: "plantIndex" } },
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "device" },
                   selectionSet: {
                     kind: "SelectionSet",
                     selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "name" } },
                       {
                         kind: "Field",
                         name: { kind: "Name", value: "hardwareId" },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "lastMeasurement" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "temperature" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "tankLevel" },
                       },
                     ],
                   },
@@ -620,7 +649,82 @@ export const GetPlantsDocument = {
       },
     },
   ],
-} as unknown as DocumentNode<GetPlantsQuery, GetPlantsQueryVariables>;
+} as unknown as DocumentNode<
+  GetDevicesWithLastMeasurementQuery,
+  GetDevicesWithLastMeasurementQueryVariables
+>;
+export const GetPlantsWithLastMeasurementDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "getPlantsWithLastMeasurement" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "getPlantsWithLastMeasurement" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "plant" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "name" } },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "plantIndex" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "wateringLevel" },
+                      },
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "device" },
+                        selectionSet: {
+                          kind: "SelectionSet",
+                          selections: [
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "hardwareId" },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "lastMeasurement" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      {
+                        kind: "Field",
+                        name: { kind: "Name", value: "soilMoisture" },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  GetPlantsWithLastMeasurementQuery,
+  GetPlantsWithLastMeasurementQueryVariables
+>;
 export const GetPlantMeasurementsDocument = {
   kind: "Document",
   definitions: [

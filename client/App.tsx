@@ -8,13 +8,13 @@ import {
 import { setContext } from "@apollo/client/link/context";
 import { NavigationContainer } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
 
 import constants from "./src/config/constants";
 import Main from "./src/Main";
 import { retrieveTokenForUser } from "./src/tokenService";
 
 const initializeApolloClient = async () => {
-  // TODO: implement this properly
   const token = await retrieveTokenForUser();
 
   const authLink = setContext((_, { headers }) => {
@@ -62,7 +62,9 @@ const App = () => {
         <Main />
       </ApolloProvider>
     </NavigationContainer>
-  ) : null;
+  ) : (
+    <ActivityIndicator size="large" />
+  );
 };
 
 export default App;

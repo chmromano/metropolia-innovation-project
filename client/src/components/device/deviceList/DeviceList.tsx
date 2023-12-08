@@ -1,10 +1,18 @@
 import { useQuery } from "@apollo/client";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React from "react";
-import { FlatList, Text, View } from "react-native";
+import React, { useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 
 import DeviceListItem from "./DeviceListItem";
-import { GET_DEVICES } from "../../../graphql/queries";
+import { GET_DEVICES_WITH_LAST_MEASUREMENTS } from "../../../graphql/queries";
 import { commonStyles, numColumns } from "../../../styles/commonStyles";
 import { DeviceRootNativeStackParamList } from "../DeviceStackNavigator";
 
@@ -16,17 +24,61 @@ interface DeviceListProps {
 }
 
 const DeviceList = ({ navigation }: DeviceListProps) => {
-  const result = useQuery(GET_DEVICES);
+  const result = useQuery(GET_DEVICES_WITH_LAST_MEASUREMENTS);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+
+    try {
+      await result.refetch();
+      setRefreshing(false);
+    } catch (error) {
+      console.error(error);
+      setRefreshing(false);
+      Alert.alert("Refresh failed", "Could not refresh the data", [
+        { text: "OK" },
+      ]);
+    }
+  };
 
   if (result.loading) {
-    return <Text>Loading devices...</Text>;
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   if (result.error || !result.data) {
-    return <Text>Something went wrong with the GraphQL query</Text>;
+    console.log(result.error);
+    return (
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void onRefresh}
+          />
+        }
+      >
+        <Text>Could not load devices.</Text>
+      </ScrollView>
+    );
   }
 
-  const devices = result.data.getDevices;
+  const devices = result.data.getDevicesWithLastMeasurement;
 
   return (
     <View style={commonStyles.globalBackground}>
@@ -38,7 +90,13 @@ const DeviceList = ({ navigation }: DeviceListProps) => {
         )}
         numColumns={numColumns}
         key={numColumns}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.device.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void onRefresh}
+          />
+        }
       />
     </View>
   );

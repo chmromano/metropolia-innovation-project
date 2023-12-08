@@ -45,7 +45,7 @@ export const createNewDevice = async (
     return {
       device: device._id,
       name: "Plant",
-      plantIndex: index,
+      plantIndex: index + 1,
       wateringLevel: 0,
       user: user._id,
     };

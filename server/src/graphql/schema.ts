@@ -6,6 +6,17 @@ const typeDefs = /* GraphQL */ `
     plants: [Plant!]!
     name: String!
   }
+  type DeviceWithMeasurement {
+    device: Device!
+    lastMeasurement: DeviceMeasurement
+  }
+
+  type DeviceMeasurement {
+    temperature: Float!
+    tankLevel: Float!
+    timestamp: String!
+    metadata: Device!
+  }
 
   type Plant {
     id: ID!
@@ -22,11 +33,9 @@ const typeDefs = /* GraphQL */ `
     metadata: Plant!
   }
 
-  type DeviceMeasurement {
-    temperature: Float!
-    tankLevel: Float!
-    timestamp: String!
-    metadata: Device!
+  type PlantWithMeasurement {
+    plant: Plant!
+    lastMeasurement: PlantMeasurement
   }
 
   type User {
@@ -44,7 +53,9 @@ const typeDefs = /* GraphQL */ `
     getDevices: [Device!]!
     getPlants: [Plant!]!
     getPlantMeasurements(plantId: String!): [PlantMeasurement!]!
+    getPlantsWithLastMeasurement: [PlantWithMeasurement!]!
     getDeviceMeasurements(deviceId: String!): [DeviceMeasurement!]!
+    getDevicesWithLastMeasurement: [DeviceWithMeasurement!]!
   }
 
   type Mutation {

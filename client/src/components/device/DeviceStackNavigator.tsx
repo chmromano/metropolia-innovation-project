@@ -3,12 +3,14 @@ import React from "react";
 
 import DeviceDetails from "./DeviceDetails";
 import DeviceList from "./deviceList/DeviceList";
-import { GetDevicesQuery } from "../../graphql/codegen/graphql";
+import { GetDevicesWithLastMeasurementQuery } from "../../graphql/codegen/graphql";
 
 export type DeviceRootNativeStackParamList = {
   DeviceList: undefined;
   DeviceListItem: undefined;
-  DeviceDetails: { device: GetDevicesQuery["getDevices"][number] };
+  DeviceDetails: {
+    device: GetDevicesWithLastMeasurementQuery["getDevicesWithLastMeasurement"][number];
+  };
 };
 
 const Stack = createNativeStackNavigator<DeviceRootNativeStackParamList>();
@@ -16,8 +18,16 @@ const Stack = createNativeStackNavigator<DeviceRootNativeStackParamList>();
 const DeviceStackNavigator = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="DeviceList" component={DeviceList} />
-      <Stack.Screen name="DeviceDetails" component={DeviceDetails} />
+      <Stack.Screen
+        name="DeviceList"
+        component={DeviceList}
+        options={{ title: "Devices" }}
+      />
+      <Stack.Screen
+        name="DeviceDetails"
+        component={DeviceDetails}
+        options={({ route }) => ({ title: route.params.device.device.name })}
+      />
     </Stack.Navigator>
   );
 };

@@ -14,7 +14,7 @@ export const parseEditPlantArguments = (
     updates.name = plantName;
   }
 
-  if (wateringLevel) {
+  if (wateringLevel || wateringLevel === 0) {
     updates.wateringLevel = wateringLevel;
   }
 

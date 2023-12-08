@@ -1,14 +1,25 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { RouteProp } from "@react-navigation/core";
-import React from "react";
-import { Alert, Button, Dimensions, Text, View } from "react-native";
+import React, { useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  Button,
+  Dimensions,
+  Modal,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { LineChart } from "react-native-chart-kit";
 
 import { PlantRootNativeStackParamList } from "./PlantStackNavigator";
+import { EditPlantMutationVariables } from "../../graphql/codegen/graphql";
 import { EDIT_PLANT, WATER_PLANT } from "../../graphql/mutations";
 import {
-  GET_DEVICES,
-  GET_PLANTS,
+  GET_DEVICES_WITH_LAST_MEASUREMENTS,
   GET_PLANT_MEASUREMENTS,
 } from "../../graphql/queries";
 
@@ -19,30 +30,103 @@ interface PlantDetailsProps {
 const PlantDetails = ({ route }: PlantDetailsProps) => {
   const { plant } = route.params;
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [plantName, setPlantName] = useState("");
+  const [wateringLevel, setWateringLevel] = useState("");
+
+  const plantMeasurements = useQuery(GET_PLANT_MEASUREMENTS, {
+    variables: { plantId: plant.plant.id },
+  });
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+
+    try {
+      await plantMeasurements.refetch();
+      setRefreshing(false);
+    } catch (error) {
+      console.error(error);
+      setRefreshing(false);
+      Alert.alert("Refresh failed", "Could not refresh the data", [
+        { text: "OK" },
+      ]);
+    }
+  };
+
   const [waterPlant] = useMutation(WATER_PLANT);
   const [editPlant] = useMutation(EDIT_PLANT, {
-    refetchQueries: [{ query: GET_DEVICES }, { query: GET_PLANTS }],
-  });
-  const plantMeasurements = useQuery(GET_PLANT_MEASUREMENTS, {
-    variables: { plantId: plant.id },
+    refetchQueries: [
+      { query: GET_DEVICES_WITH_LAST_MEASUREMENTS },
+      { query: GET_PLANT_MEASUREMENTS },
+    ],
   });
 
   if (plantMeasurements.loading) {
-    return <Text>Loading devices...</Text>;
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   if (plantMeasurements.error || !plantMeasurements.data) {
-    return <Text>Something went wrong with the GraphQL query</Text>;
+    return (
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void onRefresh}
+          />
+        }
+      >
+        <Text>Could not load plant.</Text>
+      </ScrollView>
+    );
   }
 
   const handleEditPlantPress = async () => {
     try {
+      let variables: EditPlantMutationVariables = {
+        plantId: plant.plant.id,
+      };
+
+      if (plantName.trim() === "" && wateringLevel.trim() === "") {
+        throw new Error();
+      }
+
+      if (plantName.trim() !== "" && wateringLevel.trim() !== "") {
+        variables = {
+          plantId: plant.plant.id,
+          plantName,
+          wateringLevel: parseInt(wateringLevel, 10),
+        };
+      } else if (plantName.trim() !== "") {
+        variables = {
+          plantId: plant.plant.id,
+          plantName,
+        };
+      } else if (wateringLevel.trim() !== "") {
+        variables = {
+          plantId: plant.plant.id,
+          wateringLevel: parseInt(wateringLevel, 10),
+        };
+      }
+
       const result = await editPlant({
-        variables: {
-          plantId: plant.id,
-          plantName: "Test plant name",
-          wateringLevel: 90,
-        },
+        variables,
       });
 
       if (!result.data || !result.data.editPlant) {
@@ -67,8 +151,8 @@ const PlantDetails = ({ route }: PlantDetailsProps) => {
     try {
       const result = await waterPlant({
         variables: {
-          hardwareId: plant.device.hardwareId,
-          plantIndex: plant.plantIndex,
+          hardwareId: plant.plant.device.hardwareId,
+          plantIndex: plant.plant.plantIndex,
         },
       });
 
@@ -90,52 +174,169 @@ const PlantDetails = ({ route }: PlantDetailsProps) => {
     }
   };
 
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(parseInt(timestamp));
+    return `${date.getHours()}:${date
+      .getMinutes()
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  const labels = plantMeasurements.data.getPlantMeasurements.map((item) =>
+    formatTimestamp(item.timestamp)
+  );
+  const data = plantMeasurements.data.getPlantMeasurements.map(
+    (item) => item.soilMoisture
+  );
+
   return (
-    <View>
-      <Text>{plant.id}</Text>
-      <Text>Bezier Line Chart</Text>
-      <LineChart
-        data={{
-          labels: ["January", "February", "March", "April", "May", "June"],
-          datasets: [
-            {
-              data: [0],
-              // plantMeasurements.data.getPlantMeasurements.map(
-              //   (p) => p.soilMoisture
-              // ),
+    <ScrollView
+      contentContainerStyle={{
+        flexGrow: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => void onRefresh}
+        />
+      }
+    >
+      <View style={{ paddingLeft: 15, paddingRight: 15 }}>
+        <Text
+          style={{
+            fontSize: 20,
+            marginBottom: 5,
+          }}
+        >
+          Name:{" "}
+          <Text
+            style={{
+              fontWeight: "bold",
+            }}
+          >
+            {plant.plant.name}
+          </Text>
+        </Text>
+        <Text
+          style={{
+            fontSize: 20,
+            marginBottom: 5,
+          }}
+        >
+          Current soil moisture: {plant.lastMeasurement?.soilMoisture}%
+        </Text>
+        <Text
+          style={{
+            fontSize: 20,
+            marginBottom: 5,
+          }}
+        >
+          Current watering level: {plant.plant.wateringLevel}%
+        </Text>
+
+        <Text
+          style={{
+            textAlign: "center",
+            fontSize: 20,
+            marginBottom: 10,
+            marginTop: 30,
+            fontWeight: "bold",
+          }}
+        >
+          Soil humidity, %
+        </Text>
+        <LineChart
+          data={{
+            labels: labels,
+            datasets: [
+              {
+                data: data,
+              },
+            ],
+          }}
+          width={Dimensions.get("window").width - 30} // from react-native
+          height={300}
+          chartConfig={{
+            backgroundColor: "#a5d6a7",
+            backgroundGradientFrom: "#a5d6a7",
+            backgroundGradientTo: "#a5d6a7",
+            decimalPlaces: 2, // optional, defaults to 2dp
+            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            style: {
+              borderRadius: 16,
             },
-          ],
-        }}
-        width={Dimensions.get("window").width} // from react-native
-        height={220}
-        yAxisLabel="$"
-        yAxisSuffix="k"
-        yAxisInterval={1} // optional, defaults to 1
-        chartConfig={{
-          backgroundColor: "#e26a00",
-          backgroundGradientFrom: "#fb8c00",
-          backgroundGradientTo: "#ffa726",
-          decimalPlaces: 2, // optional, defaults to 2dp
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          style: {
+            propsForDots: { r: "0" },
+            fillShadowGradientOpacity: 0,
+          }}
+          bezier
+          style={{
+            marginVertical: 8,
             borderRadius: 16,
-          },
-          propsForDots: {
-            r: "6",
-            strokeWidth: "2",
-            stroke: "#ffa726",
-          },
-        }}
-        bezier
-        style={{
-          marginVertical: 8,
-          borderRadius: 16,
-        }}
-      />
-      <Button title="Water plant" onPress={() => void handlePress()} />
-      <Button title="Edit plant" onPress={() => void handleEditPlantPress()} />
-    </View>
+          }}
+        />
+        <Button title="Water plant" onPress={() => void handlePress()} />
+        <Button title="Edit plant" onPress={() => setModalVisible(true)} />
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View
+            style={{
+              borderRadius: 16,
+              marginTop: 50,
+              marginHorizontal: 20,
+              backgroundColor: "white",
+              padding: 20,
+            }}
+          >
+            <TextInput
+              placeholder="Plant Name"
+              value={plantName}
+              onChangeText={setPlantName}
+              style={{
+                height: 40,
+                width: "100%",
+                marginVertical: 10,
+                borderWidth: 1,
+                padding: 10,
+                borderRadius: 5,
+                borderColor: "#ddd",
+                backgroundColor: "#fff",
+              }}
+            />
+            <TextInput
+              placeholder="Watering Level"
+              value={wateringLevel}
+              onChangeText={setWateringLevel}
+              keyboardType="numeric"
+              style={{
+                height: 40,
+                width: "100%",
+                marginVertical: 10,
+                borderWidth: 1,
+                padding: 10,
+                borderRadius: 5,
+                borderColor: "#ddd",
+                backgroundColor: "#fff",
+              }}
+            />
+            <Button
+              title="Submit"
+              onPress={() => {
+                setModalVisible(false);
+                void handleEditPlantPress();
+              }}
+            />
+            <Button title="Cancel" onPress={() => setModalVisible(false)} />
+          </View>
+        </Modal>
+      </View>
+    </ScrollView>
   );
 };
 

@@ -36,9 +36,8 @@ import {
 } from "./websockets";
 
 mongoose.set("strictQuery", false);
-if (config.NODE_ENV === "development" || config.NODE_ENV === "test") {
-  mongoose.set("debug", true);
-}
+
+mongoose.set("debug", true);
 
 logger.info("connecting to", config.MONGODB_URI);
 mongoose.connect(config.MONGODB_URI).catch((error) => {

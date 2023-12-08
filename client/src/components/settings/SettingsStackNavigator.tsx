@@ -39,14 +39,20 @@ const Stack = createNativeStackNavigator<SettingsRootNativeStackParamList>();
 function SettingsStackNavigator() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="SettingsList" component={Settings} />
+      <Stack.Screen
+        name="SettingsList"
+        component={Settings}
+        options={{ title: "Settings" }}
+      />
       <Stack.Screen
         name="BluetoothList"
         component={BluetoothListWithProvider}
+        options={{ title: "Devices" }}
       />
       <Stack.Screen
         name="WifiCredentials"
         component={WifiCredentialsWithProvider}
+        options={{ title: "Wi-Fi Setup" }}
       />
     </Stack.Navigator>
   );

@@ -30,9 +30,10 @@ export const editPlant = async (
 
   const plantId = validatePlantId(args.plantId);
   const plantName = args.plantName ? validatePlantName(args.plantName) : null;
-  const wateringLevel = args.wateringLevel
-    ? validateWateringLevel(args.wateringLevel)
-    : null;
+  const wateringLevel =
+    args.wateringLevel || args.wateringLevel === 0
+      ? validateWateringLevel(args.wateringLevel)
+      : null;
 
   const updatedValues = parseEditPlantArguments(plantName, wateringLevel);
   const updatedPlant = await updatePlant(plantId, updatedValues);

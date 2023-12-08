@@ -16,7 +16,10 @@ import {
   ADD_DEVICE,
   GENERATE_HARDWARE_TOKEN,
 } from "../../../graphql/mutations";
-import { GET_DEVICES, GET_PLANTS } from "../../../graphql/queries";
+import {
+  GET_DEVICES_WITH_LAST_MEASUREMENTS,
+  GET_PLANTS_WITH_LAST_MEASUREMENTS,
+} from "../../../graphql/queries";
 import { stringToInt } from "../../../types/typeUtils";
 import { SettingsRootNativeStackParamList } from "../SettingsStackNavigator";
 
@@ -35,7 +38,10 @@ const WifiCredentials = ({ route, navigation }: WifiCredentialsProps) => {
 
   const [generateHardwareToken] = useMutation(GENERATE_HARDWARE_TOKEN);
   const [addDevice] = useMutation(ADD_DEVICE, {
-    refetchQueries: [{ query: GET_DEVICES }, { query: GET_PLANTS }],
+    refetchQueries: [
+      { query: GET_DEVICES_WITH_LAST_MEASUREMENTS },
+      { query: GET_PLANTS_WITH_LAST_MEASUREMENTS },
+    ],
   });
 
   const bluetooth = useBluetoothContext();
@@ -55,7 +61,7 @@ const WifiCredentials = ({ route, navigation }: WifiCredentialsProps) => {
     }
 
     const token = result.data.generateHardwareToken;
-
+    console.log(token);
     return token;
   };
 
@@ -100,8 +106,11 @@ const WifiCredentials = ({ route, navigation }: WifiCredentialsProps) => {
       await Promise.all([
         ...writeWifiCredentialsPromises,
         bluetooth.writeToken(device, token),
-        addDeviceHelper(hardwareId, supportedPlants),
       ]);
+
+      bluetooth.disconnectFromDevice();
+
+      await addDeviceHelper(hardwareId, supportedPlants);
 
       Alert.alert("Connection Successful", "Device connected successfully.", [
         {
@@ -126,9 +135,40 @@ const WifiCredentials = ({ route, navigation }: WifiCredentialsProps) => {
   return isLoading ? (
     <ActivityIndicator size="large" />
   ) : (
-    <View>
-      <TextInput placeholder="WiFi SSID" value={ssid} onChangeText={setSsid} />
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+      }}
+    >
       <TextInput
+        style={{
+          height: 40,
+          width: "100%",
+          marginVertical: 10,
+          borderWidth: 1,
+          padding: 10,
+          borderRadius: 5,
+          borderColor: "#ddd",
+          backgroundColor: "#fff",
+        }}
+        placeholder="WiFi SSID"
+        value={ssid}
+        onChangeText={setSsid}
+      />
+      <TextInput
+        style={{
+          height: 40,
+          width: "100%",
+          marginVertical: 10,
+          borderWidth: 1,
+          padding: 10,
+          borderRadius: 5,
+          borderColor: "#ddd",
+          backgroundColor: "#fff",
+        }}
         placeholder="WiFi Password"
         value={password}
         onChangeText={setPassword}

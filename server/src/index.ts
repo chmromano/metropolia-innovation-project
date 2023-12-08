@@ -21,7 +21,6 @@ import resolvers from "./graphql/resolvers";
 import typeDefs from "./graphql/schema";
 import Device from "./models/device";
 import User from "./models/user";
-import initialiseDatabase from "./tests/initialiseDatabase";
 import {
   parseCustomSocket,
   parseString,
@@ -42,13 +41,9 @@ if (config.NODE_ENV === "development" || config.NODE_ENV === "test") {
 }
 
 logger.info("connecting to", config.MONGODB_URI);
-mongoose
-  .connect(config.MONGODB_URI)
-  // TODO: remove
-  .then(() => initialiseDatabase())
-  .catch((error) => {
-    logger.error("error connection to MongoDB:", error.message);
-  });
+mongoose.connect(config.MONGODB_URI).catch((error) => {
+  logger.error("error connection to MongoDB:", error.message);
+});
 
 const start = async () => {
   const app = express();

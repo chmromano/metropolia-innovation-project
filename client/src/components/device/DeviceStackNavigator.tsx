@@ -16,8 +16,16 @@ const Stack = createNativeStackNavigator<DeviceRootNativeStackParamList>();
 const DeviceStackNavigator = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="DeviceList" component={DeviceList} />
-      <Stack.Screen name="DeviceDetails" component={DeviceDetails} />
+      <Stack.Screen
+        name="DeviceList"
+        component={DeviceList}
+        options={{ title: "Devices" }}
+      />
+      <Stack.Screen
+        name="DeviceDetails"
+        component={DeviceDetails}
+        options={({ route }) => ({ title: route.params.device.name })}
+      />
     </Stack.Navigator>
   );
 };

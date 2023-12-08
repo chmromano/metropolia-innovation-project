@@ -1,22 +1,34 @@
 import { gql } from "./codegen";
 
-export const GET_DEVICES = gql(/* GraphQL */ `
-  query getDevices {
-    getDevices {
-      id
-      name
+export const GET_DEVICES_WITH_LAST_MEASUREMENTS = gql(/* GraphQL */ `
+  query getDevicesWithLastMeasurement {
+    getDevicesWithLastMeasurement {
+      device {
+        id
+        name
+      }
+      lastMeasurement {
+        temperature
+        tankLevel
+      }
     }
   }
 `);
 
-export const GET_PLANTS = gql(/* GraphQL */ `
-  query getPlants {
-    getPlants {
-      id
-      name
-      plantIndex
-      device {
-        hardwareId
+export const GET_PLANTS_WITH_LAST_MEASUREMENTS = gql(/* GraphQL */ `
+  query getPlantsWithLastMeasurement {
+    getPlantsWithLastMeasurement {
+      plant {
+        id
+        name
+        plantIndex
+        wateringLevel
+        device {
+          hardwareId
+        }
+      }
+      lastMeasurement {
+        soilMoisture
       }
     }
   }

@@ -7,8 +7,10 @@ import { generateHardwareToken } from "./mutations/generateHardwareToken";
 import { waterPlant } from "./mutations/waterPlant";
 import { getDeviceMeasurements } from "./queries/getDeviceMeasurements";
 import { getDevices } from "./queries/getDevices";
+import { getDevicesWithLastMeasurement } from "./queries/getDevicesWithLastMeasurement";
 import { getPlantMeasurements } from "./queries/getPlantMeasurements";
 import { getPlants } from "./queries/getPlants";
+import { getPlantsWithLastMeasurement } from "./queries/getPlantsWithLastMeasurement";
 
 const resolvers = {
   Query: {
@@ -16,6 +18,8 @@ const resolvers = {
     getPlants: getPlants,
     getDeviceMeasurements: getDeviceMeasurements,
     getPlantMeasurements: getPlantMeasurements,
+    getPlantsWithLastMeasurement: getPlantsWithLastMeasurement,
+    getDevicesWithLastMeasurement: getDevicesWithLastMeasurement,
   },
 
   Mutation: {

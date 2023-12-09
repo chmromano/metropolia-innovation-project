@@ -49,7 +49,9 @@ const PlantListItem = ({ plant, navigation }: PlantListItemProps) => {
               progress={progress}
               color={progressBarColor}
               formatText={() => {
-                return `${progress * 100}%`;
+                return progress >= 1
+                  ? "100%"
+                  : `${(progress * 100).toFixed(0)}%`;
               }}
             />
           </View>

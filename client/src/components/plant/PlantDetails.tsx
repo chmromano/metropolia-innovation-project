@@ -86,10 +86,8 @@ const PlantDetails = ({ route }: PlantDetailsProps) => {
           alignItems: "center",
         }}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => void onRefresh}
-          />
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
         <Text>Could not load plant.</Text>
@@ -197,10 +195,8 @@ const PlantDetails = ({ route }: PlantDetailsProps) => {
         alignItems: "center",
       }}
       refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={() => void onRefresh}
-        />
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
       <View style={{ paddingLeft: 15, paddingRight: 15 }}>
@@ -234,6 +230,14 @@ const PlantDetails = ({ route }: PlantDetailsProps) => {
           }}
         >
           Current watering level: {plant.plant.wateringLevel}%
+        </Text>
+        <Text
+          style={{
+            fontSize: 20,
+            marginBottom: 5,
+          }}
+        >
+          Plant label: {plant.plant.plantIndex + 1}
         </Text>
 
         <Text

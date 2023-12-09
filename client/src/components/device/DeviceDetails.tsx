@@ -67,10 +67,8 @@ const DeviceDetails = ({ route }: DeviceDetailsProps) => {
           alignItems: "center",
         }}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => void onRefresh}
-          />
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
         <Text>Could not load device.</Text>
@@ -112,10 +110,8 @@ const DeviceDetails = ({ route }: DeviceDetailsProps) => {
         alignItems: "center",
       }}
       refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={() => void onRefresh}
-        />
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
       <View style={{ paddingLeft: 15, paddingRight: 15 }}>

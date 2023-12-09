@@ -8,7 +8,7 @@ const WRITE_WLAN_PW_CHARACTERISTIC = "F1DB5367-EBFD-447C-A85C-2135AFD18A27";
 
 // TODO: implement .env file
 // const IP_ADDRESS_PORT = "https://plantuino.mrornito.net";
-const IP_ADDRESS_PORT = "http://192.168.50.198:3000";
+const IP_ADDRESS_PORT = "http://10.0.0.187:3000";
 
 const SECURE_STORE_JWT_KEY_NAME = "secure_store_jwt_key_name";
 

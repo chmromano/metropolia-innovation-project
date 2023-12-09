@@ -66,10 +66,8 @@ const PlantList = ({ navigation }: PlantListProps) => {
           alignItems: "center",
         }}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => void onRefresh}
-          />
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
         <Text>Could not load plants.</Text>
@@ -91,10 +89,8 @@ const PlantList = ({ navigation }: PlantListProps) => {
         key={numColumns}
         keyExtractor={(item) => item.plant.id}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => void onRefresh}
-          />
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
     </View>

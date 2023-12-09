@@ -67,10 +67,8 @@ const DeviceList = ({ navigation }: DeviceListProps) => {
           alignItems: "center",
         }}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => void onRefresh}
-          />
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
         <Text>Could not load devices.</Text>
@@ -92,10 +90,8 @@ const DeviceList = ({ navigation }: DeviceListProps) => {
         key={numColumns}
         keyExtractor={(item) => item.device.id}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => void onRefresh}
-          />
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
     </View>

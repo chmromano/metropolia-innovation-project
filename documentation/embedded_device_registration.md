@@ -7,13 +7,13 @@ participant frontend
 participant embedded device
 participant backend
 
-    Note right of frontend: The user is logged in
+    Note over embedded device: Advertise Bluetooth connection
 
-    frontend->>embedded device: Establish direct Wi-Fi/Bluetooth link
+    frontend->>embedded device: Establish direct Bluetooth link
 
     activate embedded device
 
-    embedded device-->>frontend: Send unique identifier (Arduino serial no.)
+    embedded device-->>frontend: Send unique identifier (MCU serial no.)
 
     deactivate embedded device
 
@@ -25,28 +25,26 @@ participant backend
 
     activate backend
 
-    Note right of backend: Generate a secret token using<br>account and device identifiers
+    Note right of backend: Generate a JWT using<br>account and device identifiers
 
-    backend-->>frontend: Send generated token
+    backend-->>frontend: Send generated JWT
 
     deactivate backend
 
     activate frontend
 
-    frontend-->>embedded device: Send token using Wi-Fi/Bluetooth
+    frontend-->>embedded device: Send JWT using Bluetooth
 
     Note over embedded device: Save token to flash
 
-    frontend-->>embedded device: Send user's Wi-Fi password
+    frontend-->>embedded device: Send user's Wi-Fi credentials
 
     deactivate frontend
 
-    Note over embedded device: Save Wi-Fi password to flash
+    Note over embedded device: Save Wi-Fi credentials to flash
 
-    Note over embedded device: Turn off Wi-Fi/Bluetooth AP
+    Note over embedded device: Disable Bluetooth advertisements
 
     Note over embedded device: Connect to the user's Wi-Fi
-
-
 
 ```

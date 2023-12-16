@@ -6,18 +6,19 @@ sequenceDiagram
 participant embedded device
 participant backend
 
-    embedded device->>backend: Start WebSocket session
+    embedded device->>backend: Request WebSocket connection
     activate embedded device
-    Note right of backend: Authentication<br>using secret token
-    embedded device-->>backend: Upload sensor data
-    deactivate embedded device
     activate backend
+    Note right of backend: Authenticate using JWT
+    Note right of backend: Upgrade connection to WebSocket
+    embedded device-->>backend: Send plant data
+    embedded device-->>backend: Send device data
     backend-->>embedded device: Send manual watering command
     backend-->>embedded device: Send updated watering settings
-    backend-->>embedded device: Send end of data signal
-    deactivate backend
-    activate embedded device
-    embedded device->>backend: End WebSocket session
-    deactivate embedded device
 
+
+    Note left of backend: Communication continues indefinetely
+
+    deactivate embedded device
+    deactivate backend
 ```

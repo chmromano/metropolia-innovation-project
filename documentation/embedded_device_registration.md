@@ -47,6 +47,4 @@ participant backend
 
     Note over embedded device: Connect to the user's Wi-Fi
 
-
-
 ```

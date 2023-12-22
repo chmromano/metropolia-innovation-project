@@ -37,7 +37,6 @@ void PlantController::disableWatering(int index)
 
 void PlantController::setThreshold(int index, int threshold)
 {
-    Serial.println("***** start setThreshold *****");
     // Check that index is valid
     if (index >= 0 && index < 4)
     {
@@ -46,10 +45,11 @@ void PlantController::setThreshold(int index, int threshold)
         // Enable watering
         this->m_plants[index].watering = true;
 
-        Serial.print("Threshold of plant at index ");
+        Serial.print("***** Threshold of plant at index ");
         Serial.print(index);
         Serial.print(" set to ");
-        Serial.println(threshold);
+        Serial.print(threshold);
+        Serial.println(". *****");
 
         if (threshold == 0)
         {
@@ -62,20 +62,16 @@ void PlantController::setThreshold(int index, int threshold)
     {
         Serial.println("Invalid index.");
     }
-    Serial.println("***** end setThreshold *****");
 }
 
 void PlantController::waterWhenNeeded(int moistures[4])
 {
-    Serial.println("***** waterWhenNeeded *****");
-
     for (int i = 0; i < 4; i++)
     {
         this->m_plants[i].currentMoisture = moistures[i];
 
         if (this->m_plants[i].watering)
         {
-
             if (this->m_plants[i].currentMoisture < this->m_plants[i].wateringThreshold)
             {
                 Serial.print("Threshold for plant at index ");
@@ -94,7 +90,6 @@ void PlantController::waterWhenNeeded(int moistures[4])
             }
         }
     }
-    Serial.println("***** end waterWhenNeeded *****");
 }
 
 void PlantController::activatePump(int index)
@@ -104,23 +99,19 @@ void PlantController::activatePump(int index)
 
 void PlantController::printArray()
 {
-    Serial.println("***** printArray *****");
     for (int i = 0; i < 4; i++)
     {
         PlantInfo plant = this->m_plants[i];
-        Serial.print("Printing plant at index: ");
-        Serial.println(i);
 
-        Serial.print("Watering: ");
+        Serial.print("Plant index: ");
+        Serial.print(plant.plantIndex);
+        Serial.print(". Watering: ");
         Serial.print(plant.watering);
         Serial.print(". Watering threshold: ");
         Serial.print(plant.wateringThreshold);
         Serial.print(". Current moisture: ");
-        Serial.print(plant.currentMoisture);
-        Serial.print(". Plant index: ");
-        Serial.println(plant.plantIndex);
+        Serial.println(plant.currentMoisture);
     }
-    Serial.println("***** end printArray *****");
 }
 
 PlantInfo *PlantController::getPlantList()

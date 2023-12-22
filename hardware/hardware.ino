@@ -60,11 +60,11 @@ void setup()
         flashController.setPASSWORD(bleController.getReceivedWiFiPassword());
         flashController.writeCredentialsToFlash();
 
-        Serial.println("Credentials retrieved and written to flash successfully.");
+        Serial.println("Credentials retrieved and written to Flash successfully.");
     }
     else
     {
-        Serial.println("WiFi credentials available from Flash.");
+        Serial.println("WiFi credentials loaded from Flash.");
     }
 
     // Attempt to read watering configuration from flash
@@ -72,6 +72,7 @@ void setup()
     {
         // Watering configuration found. Start program using this configuration.
         plantController.setPlantList(flashController.getPlantList());
+        Serial.println("Watering configuration loaded from Flash.");
     }
 
     // Connect to WiFi
@@ -81,11 +82,12 @@ void setup()
     }
 
     /*
-    char* ssid = "plantuino-5";
+    char* ssid = "plantuino-2";
     char* pwd = "irrigation23!";
+
     if (wifiController.connectToNetwork(ssid, pwd))
     {
-      Serial.println("Connected to wifi.");
+      Serial.println("WiFi OK.");
     }
     */
 }
@@ -103,7 +105,7 @@ void loop()
 
     while (webSocketController.isConnected())
     {
-        Serial.println("WebSocket isConnected.");
+        Serial.println("WS Active.");
         delay(1000);
 
         static unsigned long lastActionTime = 0;
@@ -113,7 +115,7 @@ void loop()
         if (currentTime - lastActionTime > 10000)
         {
             Serial.println(
-                "Time is up. Reading moistures, watering when needed, and sending DeviceMeasurement over WebSocket.");
+                "***** Reading moistures, watering when needed, and sending DeviceMeasurement over WebSocket. *****");
 
             int plantMoisture1 = 100; // moistSensor1.getMoisture();
             // int plantMoisture1 = random(10, 91);
@@ -124,25 +126,19 @@ void loop()
             if (moistSensor2.readMoisture())
             {
                 plantMoisture2 = moistSensor2.getMoisture();
-                Serial.print("Moisture (2) %: ");
-                Serial.println(plantMoisture2);
             }
             if (moistSensor3.readMoisture())
             {
                 plantMoisture3 = moistSensor3.getMoisture();
-                Serial.print("Moisture (3) %: ");
-                Serial.println(plantMoisture3);
             }
             if (moistSensor4.readMoisture())
             {
                 plantMoisture4 = moistSensor4.getMoisture();
-                Serial.print("Moisture (4) %: ");
-                Serial.println(plantMoisture4);
             }
 
             int plantMoistures[4] = {plantMoisture1, plantMoisture2, plantMoisture3, plantMoisture4};
-
             plantController.waterWhenNeeded(plantMoistures);
+
             plantController.printArray();
 
             // Get temperature
@@ -166,10 +162,10 @@ void loop()
             delay(1000);
 
             // Send moisture levels
-            webSocketController.sendPlantInfo(plantMoisture1, 1);
-            webSocketController.sendPlantInfo(plantMoisture2, 2);
-            webSocketController.sendPlantInfo(plantMoisture3, 3);
-            webSocketController.sendPlantInfo(plantMoisture4, 4);
+            webSocketController.sendPlantInfo(plantMoisture1, 0);
+            webSocketController.sendPlantInfo(plantMoisture2, 1);
+            webSocketController.sendPlantInfo(plantMoisture3, 2);
+            webSocketController.sendPlantInfo(plantMoisture4, 3);
 
             lastActionTime = currentTime;
         }

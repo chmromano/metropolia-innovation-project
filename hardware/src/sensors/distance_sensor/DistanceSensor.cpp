@@ -22,5 +22,16 @@ bool DistanceSensor::readDistance()
 
 long DistanceSensor::getDistance()
 {
-    return this->m_rangeInCm;
+    int rangeInCm = this->m_rangeInCm;
+
+    // Map the rangeInCm to a percentage between 0 - 100%
+    int EMPTY = 25; // Check this value
+    int FULL = 8;   // Check this value
+
+    Serial.print("Tank level:");
+    Serial.println(rangeInCm);
+
+    long tankPercentage = map(rangeInCm, FULL, EMPTY, 100, 0);
+    return tankPercentage;
+    // return this->m_rangeInCm;
 }

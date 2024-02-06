@@ -1,5 +1,5 @@
 ---
-- name: "Run mongodb container"
+- name: "Start MongoDB & NodeJS containers"
   hosts: localhost
   gather_facts: false
   tasks:
@@ -16,6 +16,8 @@
         state: started
         published_ports:
           - 27017:27017
+        networks:
+          - name: mongojs
         restart_policy: always
 
     - name: "Wait for mongodb container to be up"
@@ -27,27 +29,59 @@
 - name: "Playbook for a nodeJS container"
   hosts: localhost
   gather_facts: false
+  vars_files:
+    - secrets.yml
   tasks:
-    # - name: 'Clone GitHub repo'
-    #   git:
-    #     repo: #repo-url
-    #     dest: /home/miggy/projects/irrigation
-    #   become: true
+    - name: "Clone GitHub repo"
+      git:
+        repo: "https://{{ access_token }}@github.com/chmromano/metropolia-innovation-project.git"
+        dest: /home/miggy/docker-station/projects/irrigation/repo
+        single_branch: yes
+        version: main
 
     - name: "Pull nodeJS image"
       docker_image:
         name: node:20
         state: present
-      become: true
+        source: pull
 
     - name: "Start nodeJS container"
       docker_container:
         name: backend-nodejs
         image: node:20
         state: started
+        published_ports:
+          - 3000:3000
         command: tail -f /dev/null
-      become: true
+        networks:
+          - name: bridge
+          - name: mongojs
+        restart_policy: always
 
-    - name: "Copy the server folder inside the container"
+    - name: "Copy the server repo folder inside the container"
       command: >
-        docker cp /home/miggy/Documents/test/repo backend-nodejs:/tmp/app-code
+        docker cp /home/miggy/docker-station/projects/irrigation/repo backend-nodejs:/tmp/project-repo
+
+    - name: "Create a new directory and move code inside the container"
+      command: >
+        docker exec backend-nodejs sh -c "mv /tmp/project-repo /home/project-repo"
+
+    - name: "Install pm2 inside the container"
+      command: >
+        docker exec backend-nodejs sh -c "npm install -g pm2"
+
+    - name: "Run npm install inside the container"
+      command: >
+        docker exec backend-nodejs sh -c "cd /home/project-repo/server && npm install"
+
+    - name: "Run npm run tsc inside the container"
+      command: >
+        docker exec backend-nodejs sh -c "cd /home/project-repo/server && npm run tsc"
+
+    - name: "Copy .env file from local to nodejs container"
+      command: >
+        docker cp /home/miggy/docker-station/projects/irrigation/.env backend-nodejs:/home/project-repo/server
+
+    - name: "Run npm start inside the container"
+      command: >
+        docker exec backend-nodejs sh -c "cd /home/project-repo/server && nohup npm start &"
